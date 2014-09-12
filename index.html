@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Tfs2slack by kria</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Tfs2slack</h1>
+        <p>A plugin for TFS 2013 that sends notifications to Slack.</p>
+
+        <p class="view"><a href="https://github.com/kria/Tfs2Slack">View the Project on GitHub <small>kria/Tfs2Slack</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/kria/Tfs2Slack/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kria/Tfs2Slack/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kria/Tfs2Slack">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="tfs2slack" class="anchor" href="#tfs2slack"><span class="octicon octicon-link"></span></a>Tfs2Slack</h1>
+
+<p>Tfs2Slack is a plugin for Team Foundation Server 2013 that sends notifications to Slack.</p>
+
+<h2>
+<a name="features-and-todo" class="anchor" href="#features-and-todo"><span class="octicon octicon-link"></span></a>Features and TODO</h2>
+
+<ul>
+<li>[x] Notify multiple Slack organizations and channels</li>
+<li>[x] Rule-based event filtering</li>
+<li>[x] Collection/project/repository regex filtering</li>
+<li>[x] Configurable notification format</li>
+<li>[x] Notification links to event in TFS web</li>
+</ul><h3>
+<a name="events" class="anchor" href="#events"><span class="octicon octicon-link"></span></a>Events</h3>
+
+<ul>
+<li>[x] Build completion</li>
+<li>[x] Work item update</li>
+<li>[x] Team project creation/deletion</li>
+<li>Git
+
+<ul>
+<li>[x] Push</li>
+<li>[x] New branch/tag</li>
+<li>[x] Deleted branch/tag</li>
+<li>[x] Updated ref</li>
+<li>[x] Lightweight/annotated tag</li>
+<li>[x] Force-push</li>
+</ul>
+</li>
+<li>TFVC
+
+<ul>
+<li>[x] Checkin</li>
+</ul>
+</li>
+<li>[ ] Code reviews</li>
+</ul><h2>
+<a name="screenshot" class="anchor" href="#screenshot"><span class="octicon octicon-link"></span></a>Screenshot</h2>
+
+<p><img src="https://raw.githubusercontent.com/kria/Tfs2Slack/master/tfs2slack-notification.png" alt="Tfs2Slack screenshot"></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>If you don't already have one, add an Incoming WebHooks integration under Configure Integrations in Slack.
+Download the latest <a href="https://github.com/kria/Tfs2Slack/releases">release</a> or clone and build the source yourself.
+Open <code>DevCore.Tfs2Slack.dll.config</code> and set at least your full unique Webhook URL in <code>slackWebhookUrl</code>. There are <a href="https://github.com/kria/Tfs2Slack/blob/master/Tfs2Slack/app.config">more settings and formats</a> in there that should be somewhat self-explanatory.
+Install the Tfs2Slack plugin by dropping <code>DevCore.Tfs2Slack.dll</code>, <code>DevCore.Tfs2Slack.dll.config</code> and <code>Newtonsoft.Json.dll</code> in <em>C:\Program Files\Microsoft Team Foundation Server 12.0\Application Tier\Web Services\bin\Plugins</em> on the server.</p>
+
+<h2>
+<a name="tfs-2013-version-support" class="anchor" href="#tfs-2013-version-support"><span class="octicon octicon-link"></span></a>TFS 2013 version support</h2>
+
+<p>Because of a breaking API change in TFS 2013 Update 2, the plugin as is only works for TFS 2013 update 2 and 3 (and possibly later).
+I will publish a branch with support for previous TFS 2013 versions at a later date.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright (C) 2014 Kristian Adrup</p>
+
+<p>Tfs2Slack is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. See included file <a href="COPYING">COPYING</a> for details.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/kria">kria</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
