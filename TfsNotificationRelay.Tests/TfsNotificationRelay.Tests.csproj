@@ -84,7 +84,7 @@
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlackNotifierSpecification\LegacyNotificationsSpecification.cs" />
-    <Compile Include="SlackNotifierSpecification\SlackNotifierConfigurationSpec.cs" />
+    <Compile Include="SlackNotifierSpecification\SlackNotifierConfigurationFactorySpecification.cs" />
     <Compile Include="SlackNotifierSpecification\TestConfigurationHelper.cs" />
   </ItemGroup>
   <ItemGroup>

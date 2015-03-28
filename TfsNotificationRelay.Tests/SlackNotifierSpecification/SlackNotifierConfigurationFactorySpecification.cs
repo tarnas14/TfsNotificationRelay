@@ -1,12 +1,19 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification
 {
-    using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Slack;
     using NUnit.Framework;
 
     [TestFixture]
-    class SlackNotifierConfigurationSpec
+    class SlackNotifierConfigurationFactorySpecification
     {
+        private ISlackConfigurationFactory _factory;
+
+        [SetUp]
+        public void Setup()
+        {
+            _factory = new SlackConfigurationFactory();
+        }
+
         [Test]
         public void ShouldRecogniseLegacyNotificationSchemeWhenChannelsSettingIsNotEmpty()
         {
@@ -14,7 +21,7 @@
             var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
 
             //when
-            var config = new SlackConfiguration(slackBot);
+            var config = _factory.GetConfiguration(slackBot);
 
             //then
             Assert.That(config.AllNotificationsShouldGoToAllChannels, Is.True);
@@ -30,7 +37,7 @@
                 "#b"
             };
             var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
-            var config = new SlackConfiguration(slackBot);
+            var config = _factory.GetConfiguration(slackBot);
 
             //when
             var actualChannels = config.Channels;
@@ -46,7 +53,7 @@
             var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
 
             //when
-            var config = new SlackConfiguration(slackBot);
+            var config = _factory.GetConfiguration(slackBot);
 
             //then
             Assert.That(config.Bot, Is.EqualTo(slackBot));

@@ -24,11 +24,13 @@ namespace DevCore.TfsNotificationRelay.Slack
     {
         private readonly ISlackClient _slackClient;
         private readonly ISlackMessageFactory _slackMessageFactory;
+        private readonly ISlackConfigurationFactory _slackConfigurationFactory;
 
-        public SlackNotifier(ISlackClient slackClient, ISlackMessageFactory slackMessageFactory)
+        public SlackNotifier(ISlackClient slackClient, ISlackMessageFactory slackMessageFactory, ISlackConfigurationFactory slackConfigurationFactory)
         {
             _slackClient = slackClient;
             _slackMessageFactory = slackMessageFactory;
+            _slackConfigurationFactory = slackConfigurationFactory;
         }
 
         public SlackNotifier()
@@ -38,7 +40,7 @@ namespace DevCore.TfsNotificationRelay.Slack
 
         public async Task NotifyAsync(TeamFoundationRequestContext requestContext, INotification notification, BotElement bot)
         {
-            var config = new SlackConfiguration(bot);
+            var config = _slackConfigurationFactory.GetConfiguration(bot);
             var tasks = new List<Task>();
 
             foreach (string channel in config.Channels)

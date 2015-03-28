@@ -71,12 +71,14 @@
     <Compile Include="Attachment.cs" />
     <Compile Include="AttachmentField.cs" />
     <Compile Include="ISlackClient.cs" />
+    <Compile Include="ISlackConfigurationFactory.cs" />
     <Compile Include="ISlackMessageFactory.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="PayloadSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlackClient.cs" />
     <Compile Include="SlackConfiguration.cs" />
+    <Compile Include="SlackConfigurationFactory.cs" />
     <Compile Include="SlackHelper.cs" />
     <Compile Include="SlackNotifier.cs" />
   </ItemGroup>

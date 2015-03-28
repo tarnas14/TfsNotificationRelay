@@ -15,24 +15,40 @@
         private BotElement _legacyBotElement;
         private ISlackClient _slackClient;
         private ISlackMessageFactory _slackMessageFactory;
+        private ISlackConfigurationFactory _slackConfigurationFactory;
 
         [SetUp]
         public void Setup()
         {
             _legacyBotElement = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
             _slackClient = A.Fake<ISlackClient>();
+
             _slackMessageFactory = A.Fake<ISlackMessageFactory>();
             A.CallTo(
                 () =>
                     _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<BotElement>.Ignored, A<String>.Ignored))
                 .ReturnsLazily((INotification notification, BotElement bot, string channel) => new Message{Channel = channel});
-            _slackNotifier = new SlackNotifier(_slackClient, _slackMessageFactory);
+
+            _slackConfigurationFactory = A.Fake<ISlackConfigurationFactory>();
+
+            _slackNotifier = new SlackNotifier(_slackClient, _slackMessageFactory, _slackConfigurationFactory);
         }
 
         [Test]
         public async void ShouldNotifyAllChannelsAboutTheNotification()
         {
             //given
+            var slackConfiguration = new SlackConfiguration
+            {
+                AllNotificationsShouldGoToAllChannels = true,
+                Channels = new[]
+                {
+                    "#general",
+                    "#b"
+                }
+            };
+            A.CallTo(() => _slackConfigurationFactory.GetConfiguration(A<BotElement>.Ignored))
+                .Returns(slackConfiguration);
 
             //when;
             await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), A.Fake<INotification>(), _legacyBotElement);
