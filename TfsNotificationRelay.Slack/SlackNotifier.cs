@@ -11,17 +11,11 @@
  * (at your option) any later version. See included file COPYING for details.
  */
 
-using DevCore.TfsNotificationRelay;
 using DevCore.TfsNotificationRelay.Notifications;
-using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DevCore.TfsNotificationRelay.Configuration;
-using DevCore.TfsNotificationRelay.Notifications.GitPush;
 using Microsoft.TeamFoundation.Framework.Server;
 
 namespace DevCore.TfsNotificationRelay.Slack
