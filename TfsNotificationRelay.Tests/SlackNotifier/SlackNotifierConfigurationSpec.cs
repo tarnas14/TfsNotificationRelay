@@ -1,30 +1,19 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifier
 {
-    using System.Configuration;
-    using System.Linq;
-    using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Slack;
     using NUnit.Framework;
 
     [TestFixture]
     class SlackNotifierConfigurationSpec
     {
-        private SlackConfiguration GetSlackBotFromConfigFile(string configFile)
-        {
-            var fileMap = new ExeConfigurationFileMap {ExeConfigFilename = configFile};
-            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-
-            var section = config.GetSection("tfsNotificationRelay") as TfsNotificationRelaySection;
-
-            var slackBot = section.Bots.First(bot => bot.Id == "slack");
-            return new SlackConfiguration(slackBot);
-        }
-
         [Test]
         public void ShouldRecogniseLegacyNotificationSchemeWhenChannelsSettingIsNotEmpty()
         {
+            //given
+            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifier\legacyNotification.config");
+
             //when
-            var config = GetSlackBotFromConfigFile(@"SlackNotifier\legacyNotification.config");
+            var config = new SlackConfiguration(slackBot);
 
             //then
             Assert.That(config.AllNotificationsShouldGoToAllChannels, Is.True);
@@ -39,7 +28,8 @@
                 "#general",
                 "#b"
             };
-            var config = GetSlackBotFromConfigFile(@"SlackNotifier\legacyNotification.config");
+            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifier\legacyNotification.config");
+            var config = new SlackConfiguration(slackBot);
 
             //when
             var actualChannels = config.Channels;

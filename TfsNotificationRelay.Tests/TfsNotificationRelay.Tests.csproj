@@ -56,8 +56,8 @@
   <ItemGroup>
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SlackNotifier\AllNotificationsToAllSpecifiedChannelsSpecification.cs" />
     <Compile Include="SlackNotifier\SlackNotifierConfigurationSpec.cs" />
+    <Compile Include="SlackNotifier\TestConfigurationHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TfsNotificationRelay.Slack\TfsNotificationRelay.Slack.csproj">
