@@ -9,18 +9,43 @@
     [TestFixture]
     class SlackNotifierConfigurationSpec
     {
+        private SlackConfiguration GetSlackBotFromConfigFile(string configFile)
+        {
+            var fileMap = new ExeConfigurationFileMap {ExeConfigFilename = configFile};
+            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+
+            var section = config.GetSection("tfsNotificationRelay") as TfsNotificationRelaySection;
+
+            var slackBot = section.Bots.First(bot => bot.Id == "slack");
+            return new SlackConfiguration(slackBot);
+        }
+
         [Test]
         public void ShouldRecogniseLegacyNotificationSchemeWhenChannelsSettingIsNotEmpty()
         {
-            //given
-            var configuration = ConfigurationManager.GetSection("tfsNotificationRelay") as TfsNotificationRelaySection;
-            var slackBot = configuration.Bots.First(bot => bot.Id == "slack");
-
             //when
-            var config = new SlackConfiguration(slackBot);
+            var config = GetSlackBotFromConfigFile(@"SlackNotifier\legacyNotification.config");
 
             //then
             Assert.That(config.AllNotificationsShouldGoToAllChannels, Is.True);
+        }
+
+        [Test]
+        public void ShouldRetrieveChannelListFromConfiguration()
+        {
+            //given
+            var expectedChannels = new[]
+            {
+                "#general",
+                "#b"
+            };
+            var config = GetSlackBotFromConfigFile(@"SlackNotifier\legacyNotification.config");
+
+            //when
+            var actualChannels = config.Channels;
+
+            //then
+            Assert.That(actualChannels, Is.EquivalentTo(expectedChannels));
         }
     }
 }

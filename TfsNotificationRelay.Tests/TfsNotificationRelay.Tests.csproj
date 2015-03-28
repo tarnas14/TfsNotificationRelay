@@ -74,6 +74,9 @@
       <Link>app.config</Link>
     </None>
     <None Include="packages.config" />
+    <Content Include="SlackNotifier\legacyNotification.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

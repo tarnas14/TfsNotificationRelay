@@ -1,21 +1,29 @@
 namespace DevCore.TfsNotificationRelay.Slack
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Configuration;
 
     public class SlackConfiguration
     {
-        private readonly BotElement _slackBot;
-
         public SlackConfiguration(BotElement slackBot)
         {
-            _slackBot = slackBot;
+            ReadSlackBot(slackBot);
+        }
+
+        private void ReadSlackBot(BotElement slackBot)
+        {
+            Channels = slackBot.GetSetting(ChannelsSetting)
+                .Split(',')
+                .Select(channel => channel.Trim());
+
+            AllNotificationsShouldGoToAllChannels = Channels.Any();
         }
 
         public const string ChannelsSetting = "channels";
 
-        public bool AllNotificationsShouldGoToAllChannels
-        {
-            get { return !string.IsNullOrEmpty(_slackBot.GetSetting("channels")); }
-        }
+        public bool AllNotificationsShouldGoToAllChannels { get; private set; }
+
+        public IEnumerable<string> Channels { get; private set; }
     }
 }
