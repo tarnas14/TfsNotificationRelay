@@ -1,4 +1,4 @@
-﻿namespace TfsNotificationRelay.Tests.SlackNotifier
+﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification
 {
     using System.Configuration;
     using System.Linq;

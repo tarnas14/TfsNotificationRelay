@@ -22,18 +22,31 @@ namespace DevCore.TfsNotificationRelay.Slack
 {
     public class SlackNotifier : INotifier
     {
+        private readonly ISlackClient _slackClient;
+        private readonly ISlackMessageFactory _slackMessageFactory;
+
+        public SlackNotifier(ISlackClient slackClient, ISlackMessageFactory slackMessageFactory)
+        {
+            _slackClient = slackClient;
+            _slackMessageFactory = slackMessageFactory;
+        }
+
+        public SlackNotifier()
+        {
+            _slackClient = new SlackClient();
+        }
+
         public async Task NotifyAsync(TeamFoundationRequestContext requestContext, INotification notification, BotElement bot)
         {
-            var channels = bot.GetSetting("channels").Split(',').Select(chan => chan.Trim());
+            var config = new SlackConfiguration(bot);
             var tasks = new List<Task>();
-            var slackClient = new SlackClient();
 
-            foreach (string channel in channels)
+            foreach (string channel in config.Channels)
             {
-                Message slackMessage = ToSlackMessage((dynamic)notification, bot, channel);
+                Message slackMessage = _slackMessageFactory.GetMessage(notification, config.Bot, channel);
                 if (slackMessage != null)
                 {
-                    tasks.Add(slackClient.SendMessageAsync(slackMessage, bot.GetSetting("webhookUrl")).ContinueWith(t => t.Result.EnsureSuccessStatusCode()));
+                    tasks.Add(_slackClient.SendMessageAsync(slackMessage, bot.GetSetting("webhookUrl")).ContinueWith(t => t.Result.EnsureSuccessStatusCode()));
                 }
             }
 
