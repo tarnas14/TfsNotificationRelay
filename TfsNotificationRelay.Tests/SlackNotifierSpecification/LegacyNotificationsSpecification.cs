@@ -26,8 +26,8 @@
             _slackMessageFactory = A.Fake<ISlackMessageFactory>();
             A.CallTo(
                 () =>
-                    _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<BotElement>.Ignored, A<String>.Ignored))
-                .ReturnsLazily((INotification notification, BotElement bot, string channel) => new Message{Channel = channel});
+                    _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<SlackConfiguration>.Ignored, A<String>.Ignored))
+                .ReturnsLazily((INotification notification, SlackConfiguration slackConfiguration, string channel) => new Message { Channel = channel });
 
             _slackConfigurationFactory = A.Fake<ISlackConfigurationFactory>();
 

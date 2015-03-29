@@ -13,7 +13,6 @@
 
 using DevCore.TfsNotificationRelay.Notifications;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DevCore.TfsNotificationRelay.Configuration;
 using Microsoft.TeamFoundation.Framework.Server;
@@ -36,6 +35,8 @@ namespace DevCore.TfsNotificationRelay.Slack
         public SlackNotifier()
         {
             _slackClient = new SlackClient();
+            _slackMessageFactory = new SlackMessageFactory();
+            _slackConfigurationFactory = new SlackConfigurationFactory();
         }
 
         public async Task NotifyAsync(TeamFoundationRequestContext requestContext, INotification notification, BotElement bot)
@@ -45,7 +46,7 @@ namespace DevCore.TfsNotificationRelay.Slack
 
             foreach (string channel in config.Channels)
             {
-                Message slackMessage = _slackMessageFactory.GetMessage(notification, config.Bot, channel);
+                Message slackMessage = _slackMessageFactory.GetMessage(notification, config, channel);
                 if (slackMessage != null)
                 {
                     tasks.Add(_slackClient.SendMessageAsync(slackMessage, bot.GetSetting("webhookUrl")).ContinueWith(t => t.Result.EnsureSuccessStatusCode()));
@@ -54,33 +55,5 @@ namespace DevCore.TfsNotificationRelay.Slack
 
             await Task.WhenAll(tasks);
         }
-
-        public Message ToSlackMessage(INotification notification, BotElement bot, string channel)
-        {
-            var lines = notification.ToMessage(bot, s => s);
-
-            return SlackHelper.CreateSlackMessage(lines, bot, channel, bot.GetSetting("standardColor"));
-        }
-
-        public Message ToSlackMessage(BuildCompletionNotification notification, BotElement bot, string channel)
-        {
-            var lines = notification.ToMessage(bot, s => s);
-            var color = notification.IsSuccessful ? bot.GetSetting("successColor") : bot.GetSetting("errorColor");
-
-            return SlackHelper.CreateSlackMessage(lines, bot, channel, color);
-        }
-
-        public Message ToSlackMessage(WorkItemChangedNotification notification, BotElement bot, string channel)
-        {
-            string header = notification.ToMessage(bot, s => s).First();
-            var fields = new[] { 
-                new AttachmentField(bot.Text.State, notification.State, true), 
-                new AttachmentField(bot.Text.AssignedTo, notification.AssignedTo, true) 
-            };
-
-            return SlackHelper.CreateSlackMessage(header, fields, bot, channel, bot.GetSetting("standardColor"));
-        }
-
-
     }
 }

@@ -80,6 +80,7 @@
     <Compile Include="SlackConfiguration.cs" />
     <Compile Include="SlackConfigurationFactory.cs" />
     <Compile Include="SlackHelper.cs" />
+    <Compile Include="SlackMessageFactory.cs" />
     <Compile Include="SlackNotifier.cs" />
   </ItemGroup>
   <ItemGroup>
