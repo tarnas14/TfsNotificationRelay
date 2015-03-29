@@ -84,7 +84,10 @@
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlackNotifierSpecification\MainNotificationsSpecification.cs" />
-    <Compile Include="SlackNotifierSpecification\SlackMessageFactorySpecification.cs" />
+    <Compile Include="SlackNotifierSpecification\SlackMessageFactorySpecification\SlackMessageBasicSpecification.cs" />
+    <Compile Include="SlackNotifierSpecification\SlackMessageFactorySpecification\SlackMessageFromBuildCompletionSpecification.cs" />
+    <Compile Include="SlackNotifierSpecification\SlackMessageFactorySpecification\SlackMessageFromGenericNotificationSpecification.cs" />
+    <Compile Include="SlackNotifierSpecification\SlackMessageFactorySpecification\SlackMessageFromWorkItemChangedSpecification.cs" />
     <Compile Include="SlackNotifierSpecification\SlackNotifierConfigurationFactorySpecification.cs" />
     <Compile Include="SlackNotifierSpecification\TestConfigurationHelper.cs" />
   </ItemGroup>
