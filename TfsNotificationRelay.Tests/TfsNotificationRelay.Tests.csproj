@@ -83,7 +83,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SlackNotifierSpecification\LegacyNotificationsSpecification.cs" />
+    <Compile Include="SlackNotifierSpecification\MainNotificationsSpecification.cs" />
     <Compile Include="SlackNotifierSpecification\SlackNotifierConfigurationFactorySpecification.cs" />
     <Compile Include="SlackNotifierSpecification\TestConfigurationHelper.cs" />
   </ItemGroup>
@@ -102,7 +102,7 @@
       <Link>app.config</Link>
     </None>
     <None Include="packages.config" />
-    <Content Include="SlackNotifierSpecification\legacyNotification.config">
+    <Content Include="SlackNotifierSpecification\slackNotifierTestConfig.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>

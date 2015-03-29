@@ -23,7 +23,7 @@
                 "#general",
                 "#b"
             };
-            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
+            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\slackNotifierTestConfig.config");
             var config = _factory.GetConfiguration(slackBot);
 
             //when
@@ -37,7 +37,7 @@
         public void ShouldStoreBotElementThatWasUsedToInitializeIt()
         {
             //given
-            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
+            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\slackNotifierTestConfig.config");
 
             //when
             var config = _factory.GetConfiguration(slackBot);

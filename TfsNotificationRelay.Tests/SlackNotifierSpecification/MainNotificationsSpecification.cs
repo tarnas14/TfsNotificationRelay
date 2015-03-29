@@ -9,7 +9,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    class LegacyNotificationsSpecification
+    class MainNotificationsSpecification
     {
         private SlackNotifier _slackNotifier;
         private BotElement _legacyBotElement;
@@ -20,7 +20,7 @@
         [SetUp]
         public void Setup()
         {
-            _legacyBotElement = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
+            _legacyBotElement = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\slackNotifierTestConfig.config");
             _slackClient = A.Fake<ISlackClient>();
 
             _slackMessageFactory = A.Fake<ISlackMessageFactory>();
