@@ -49,7 +49,7 @@ namespace DevCore.TfsNotificationRelay.Slack
                 Message slackMessage = _slackMessageFactory.GetMessage(notification, config, channel);
                 if (slackMessage != null)
                 {
-                    tasks.Add(_slackClient.SendMessageAsync(slackMessage, bot.GetSetting("webhookUrl")).ContinueWith(t => t.Result.EnsureSuccessStatusCode()));
+                    tasks.Add(_slackClient.SendMessageAsync(slackMessage, config.WebhookUrl).ContinueWith(t => t.Result.EnsureSuccessStatusCode()));
                 }
             }
 

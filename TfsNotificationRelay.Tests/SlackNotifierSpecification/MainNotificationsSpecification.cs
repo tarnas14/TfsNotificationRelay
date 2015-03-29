@@ -35,7 +35,7 @@
         }
 
         [Test]
-        public async void ShouldNotifyAllChannelsAboutTheNotification()
+        public async void ShouldNotifyAllChannelsAboutTheNotificationViaConfiguredWebhookUrl()
         {
             //given
             var slackConfiguration = new SlackConfiguration
@@ -44,7 +44,8 @@
                 {
                     "#general",
                     "#b"
-                }
+                },
+                WebhookUrl = "testWebhookUrl"
             };
             A.CallTo(() => _slackConfigurationFactory.GetConfiguration(A<BotElement>.Ignored))
                 .Returns(slackConfiguration);
@@ -53,8 +54,14 @@
             await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), A.Fake<INotification>(), _legacyBotElement);
 
             //then
-            A.CallTo(() => _slackClient.SendMessageAsync(A<Message>.That.Matches(msg => msg.Channel == "#general"), A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-            A.CallTo(() => _slackClient.SendMessageAsync(A<Message>.That.Matches(msg => msg.Channel == "#b"), A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _slackClient.SendMessageAsync(
+                A<Message>.That.Matches(msg => msg.Channel == "#general"),
+                A<string>.That.Matches(url => slackConfiguration.WebhookUrl.Equals(url))))
+                .MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _slackClient.SendMessageAsync(
+                A<Message>.That.Matches(msg => msg.Channel == "#b"), 
+                A<string>.That.Matches(url => slackConfiguration.WebhookUrl.Equals(url))))
+                .MustHaveHappened(Repeated.Exactly.Once);
         }
     }
 }
