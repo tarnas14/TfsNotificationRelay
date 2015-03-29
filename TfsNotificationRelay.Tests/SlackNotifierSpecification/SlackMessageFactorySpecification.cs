@@ -22,26 +22,46 @@
         }
 
         [Test]
-        public void ShouldFillMessageWithSpecifiedChannelRegardlessOfNotificationType()
+        public void ShouldFillMessageFromGenericNotificationWithSpecifiedChannel()
         {
             //given
             const string expectedChannel = "expectedChannel";
 
             var genericNotification = NotificationBuilder.GetGenericNotification("some", "lines");
-            ShouldCreateMessageWithChannel(genericNotification, expectedChannel);
+
+            //when
+            var message = new SlackMessageFactory().GetMessage(genericNotification, _slackConfiguration, expectedChannel);
+
+            //then
+            Assert.That(message.Channel, Is.EqualTo(expectedChannel));
+        }
+
+        [Test]
+        public void ShouldFillMessageFromBuildCompletionNotificationWithSpecifiedChannel()
+        {
+            //given
+            const string expectedChannel = "expectedChannel";
 
             var buildCompletionNotification =
                 NotificationBuilder.GetBuildCompletedNotification("some", "lines");
-            ShouldCreateMessageWithChannel(buildCompletionNotification, expectedChannel);
 
-            var workItemChangedNotification = NotificationBuilder.GetWorkItemChangeNotification("some", "lines");
-            ShouldCreateMessageWithChannel(workItemChangedNotification, expectedChannel);
+            //when
+            var message = new SlackMessageFactory().GetMessage(buildCompletionNotification, _slackConfiguration, expectedChannel);
+
+            //then
+            Assert.That(message.Channel, Is.EqualTo(expectedChannel));
         }
 
-        private void ShouldCreateMessageWithChannel(INotification notification, string expectedChannel)
+        [Test]
+        public void ShouldFillMessageFromWorkItemChangedNotificationWithSpecifiedChannel()
         {
+            //given
+            const string expectedChannel = "expectedChannel";
+
+            var workItemChangedNotification = NotificationBuilder.GetWorkItemChangeNotification("some", "lines");
+
             //when
-            var message = new SlackMessageFactory().GetMessage(notification, _slackConfiguration, expectedChannel);
+            var message = new SlackMessageFactory().GetMessage(workItemChangedNotification, _slackConfiguration, expectedChannel);
 
             //then
             Assert.That(message.Channel, Is.EqualTo(expectedChannel));
@@ -50,25 +70,6 @@
 
     static class NotificationBuilder
     {
-        public static INotification GetNotification()
-        {
-            return A.Fake<INotification>();
-        }
-
-        public static T GetNotification<T>()
-        {
-            return A.Fake<T>();
-        }
-
-        public static T Returning<T>(this T notification, params string[] lines) where T : INotification
-        {
-            var returnLines = new List<string>(lines);
-            A.CallTo(() => notification.ToMessage(A<BotElement>.Ignored, A<Func<string, string>>.Ignored))
-                .Returns(returnLines);
-
-            return notification;
-        }
-
         public static IBuildCompletionNotification GetBuildCompletedNotification(params string[] lines)
         {
             var notification = A.Fake<IBuildCompletionNotification>();
