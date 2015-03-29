@@ -15,19 +15,6 @@
         }
 
         [Test]
-        public void ShouldRecogniseLegacyNotificationSchemeWhenChannelsSettingIsNotEmpty()
-        {
-            //given
-            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\legacyNotification.config");
-
-            //when
-            var config = _factory.GetConfiguration(slackBot);
-
-            //then
-            Assert.That(config.AllNotificationsShouldGoToAllChannels, Is.True);
-        }
-
-        [Test]
         public void ShouldRetrieveChannelListFromConfiguration()
         {
             //given

@@ -15,7 +15,6 @@ namespace DevCore.TfsNotificationRelay.Slack
             return new SlackConfiguration
             {
                 Channels = channels,
-                AllNotificationsShouldGoToAllChannels = channels.Any(),
                 Bot = slackBot
             };
         }

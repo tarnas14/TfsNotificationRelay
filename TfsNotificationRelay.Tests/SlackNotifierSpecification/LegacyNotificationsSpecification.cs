@@ -40,7 +40,6 @@
             //given
             var slackConfiguration = new SlackConfiguration
             {
-                AllNotificationsShouldGoToAllChannels = true,
                 Channels = new[]
                 {
                     "#general",

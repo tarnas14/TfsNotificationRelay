@@ -5,8 +5,6 @@ namespace DevCore.TfsNotificationRelay.Slack
 
     public class SlackConfiguration
     {
-        public bool AllNotificationsShouldGoToAllChannels { get; set; }
-
         public IEnumerable<string> Channels { get; set; }
 
         public BotElement Bot { get; set; }
