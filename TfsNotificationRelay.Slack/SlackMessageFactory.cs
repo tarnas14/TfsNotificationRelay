@@ -18,7 +18,7 @@ namespace DevCore.TfsNotificationRelay.Slack
             return SlackHelper.CreateSlackMessage(lines, bot, channel, bot.GetSetting("standardColor"));
         }
 
-        private Message ToSlackMessage(BuildCompletionNotification notification, BotElement bot, string channel)
+        private Message ToSlackMessage(IBuildCompletionNotification notification, BotElement bot, string channel)
         {
             var lines = notification.ToMessage(bot, s => s);
             var color = notification.IsSuccessful ? bot.GetSetting("successColor") : bot.GetSetting("errorColor");
@@ -26,7 +26,7 @@ namespace DevCore.TfsNotificationRelay.Slack
             return SlackHelper.CreateSlackMessage(lines, bot, channel, color);
         }
 
-        private Message ToSlackMessage(WorkItemChangedNotification notification, BotElement bot, string channel)
+        private Message ToSlackMessage(IWorkItemChangedNotification notification, BotElement bot, string channel)
         {
             string header = notification.ToMessage(bot, s => s).First();
             var fields = new[] { 

@@ -119,7 +119,9 @@
     <Compile Include="Notifications\GitPush\DeleteRow.cs" />
     <Compile Include="Notifications\GitPush\GitPushNotification.cs" />
     <Compile Include="Notifications\GitPush\RefUpdateRow.cs" />
+    <Compile Include="Notifications\IBuildCompletionNotification.cs" />
     <Compile Include="Notifications\INotification.cs" />
+    <Compile Include="Notifications\IWorkItemChangedNotification.cs" />
     <Compile Include="Notifications\MultiRowNotification.cs" />
     <Compile Include="Notifications\NotificationRow.cs" />
     <Compile Include="EventHandlers\ProjectCreatedHandler.cs" />
