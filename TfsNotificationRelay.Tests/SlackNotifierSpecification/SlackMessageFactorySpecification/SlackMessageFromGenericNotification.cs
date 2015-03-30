@@ -1,15 +1,11 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification.SlackMessageFactorySpecification
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Notifications;
-    using FakeItEasy;
     using NUnit.Framework;
 
     [TestFixture]
-    class SlackMessageFromGenericNotificationSpecification : SlackMessageBasicSpecification<INotification>
+    class SlackMessageFromGenericNotification : SlackMessageElementsForEveryNotification<INotification>
     {
         [Test]
         public void ShouldUseStandardColorForGenericNotifications()

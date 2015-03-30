@@ -12,7 +12,6 @@
     class MainNotificationsSpecification
     {
         private SlackNotifier _slackNotifier;
-        private BotElement _legacyBotElement;
         private ISlackClient _slackClient;
         private ISlackMessageFactory _slackMessageFactory;
         private ISlackConfigurationFactory _slackConfigurationFactory;
@@ -20,14 +19,9 @@
         [SetUp]
         public void Setup()
         {
-            _legacyBotElement = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\slackNotifierTestConfig.config");
             _slackClient = A.Fake<ISlackClient>();
 
             _slackMessageFactory = A.Fake<ISlackMessageFactory>();
-            A.CallTo(
-                () =>
-                    _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<SlackConfiguration>.Ignored, A<String>.Ignored))
-                .ReturnsLazily((INotification notification, SlackConfiguration slackConfiguration, string channel) => new Message { Channel = channel });
 
             _slackConfigurationFactory = A.Fake<ISlackConfigurationFactory>();
 
@@ -47,11 +41,17 @@
                 },
                 WebhookUrl = "testWebhookUrl"
             };
+
             A.CallTo(() => _slackConfigurationFactory.GetConfiguration(A<BotElement>.Ignored))
                 .Returns(slackConfiguration);
 
+            A.CallTo(
+                () =>
+                    _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<SlackConfiguration>.Ignored, A<String>.Ignored))
+                .ReturnsLazily((INotification notification, SlackConfiguration slackConfig, string channel) => new Message { Channel = channel });
+
             //when;
-            await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), A.Fake<INotification>(), _legacyBotElement);
+            await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), A.Fake<INotification>(), A.Fake<BotElement>());
 
             //then
             A.CallTo(() => _slackClient.SendMessageAsync(

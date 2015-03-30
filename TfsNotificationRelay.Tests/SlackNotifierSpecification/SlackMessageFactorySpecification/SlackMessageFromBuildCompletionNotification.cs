@@ -8,7 +8,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    class SlackMessageFromWorkItemChangedSpecification : SlackMessageBasicSpecification<IWorkItemChangedNotification>
+    class SlackMessageFromBuildCompletionNotification : SlackMessageElementsForEveryNotification<IBuildCompletionNotification>
     {
         protected override void ReturnFromNotification(params string[] notificationLines)
         {

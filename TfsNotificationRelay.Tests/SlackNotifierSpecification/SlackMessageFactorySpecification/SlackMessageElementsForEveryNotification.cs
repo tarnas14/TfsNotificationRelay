@@ -9,7 +9,7 @@
     using FakeItEasy;
     using NUnit.Framework;
 
-    abstract class SlackMessageBasicSpecification<T> where T : INotification
+    abstract class SlackMessageElementsForEveryNotification<T> where T : INotification
     {
         protected SlackConfiguration SlackConfiguration;
         protected T Notification;
@@ -44,7 +44,7 @@
         }
 
         [Test]
-        public void ShouldTreatFirstLineOfTheMessageAsFallbackAndPretextForAttachments()
+        public void ShouldTreatFirstLineOfTheNotificationAsFallbackAndPretextForAttachments()
         {
             //given
             ReturnFromNotification("fallback", "other", "lines");
@@ -62,7 +62,7 @@
         }
 
         [Test]
-        public void ShouldFillMessageFromWorkItemChangedNotificationWithSpecifiedChannel()
+        public void ShouldFillMessageChannel()
         {
             //given
             const string expectedChannel = "expectedChannel";
