@@ -1,9 +1,6 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification
 {
-    using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Slack;
-    using FakeItEasy;
-    using FakeItEasy.ExtensionSyntax.Full;
     using NUnit.Framework;
 
     [TestFixture]

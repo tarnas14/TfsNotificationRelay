@@ -1,40 +1,39 @@
 namespace DevCore.TfsNotificationRelay.Slack
 {
     using System.Linq;
-    using Configuration;
     using Notifications;
 
     public class SlackMessageFactory : ISlackMessageFactory
     {
         public Message GetMessage(INotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            return ToSlackMessage((dynamic) notification, slackConfiguration.Bot, channel);
+            return ToSlackMessage((dynamic) notification, slackConfiguration, channel);
         }
 
-        private Message ToSlackMessage(INotification notification, BotElement bot, string channel)
+        private Message ToSlackMessage(INotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            var lines = notification.ToMessage(bot, s => s);
+            var lines = notification.ToMessage(slackConfiguration.Bot, s => s);
 
-            return SlackHelper.CreateSlackMessage(lines, bot, channel, bot.GetSetting("standardColor"));
+            return SlackHelper.CreateSlackMessage(lines, slackConfiguration, channel, slackConfiguration.StandardColor);
         }
 
-        private Message ToSlackMessage(IBuildCompletionNotification notification, BotElement bot, string channel)
+        private Message ToSlackMessage(IBuildCompletionNotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            var lines = notification.ToMessage(bot, s => s);
-            var color = notification.IsSuccessful ? bot.GetSetting("successColor") : bot.GetSetting("errorColor");
+            var lines = notification.ToMessage(slackConfiguration.Bot, s => s);
+            var color = notification.IsSuccessful ? slackConfiguration.SuccessColor : slackConfiguration.ErrorColor;
 
-            return SlackHelper.CreateSlackMessage(lines, bot, channel, color);
+            return SlackHelper.CreateSlackMessage(lines, slackConfiguration, channel, color);
         }
 
-        private Message ToSlackMessage(IWorkItemChangedNotification notification, BotElement bot, string channel)
+        private Message ToSlackMessage(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            string header = notification.ToMessage(bot, s => s).First();
+            string header = notification.ToMessage(slackConfiguration.Bot, s => s).First();
             var fields = new[] { 
-                new AttachmentField(bot.Text.State, notification.State, true), 
-                new AttachmentField(bot.Text.AssignedTo, notification.AssignedTo, true) 
+                new AttachmentField(slackConfiguration.Bot.Text.State, notification.State, true), 
+                new AttachmentField(slackConfiguration.Bot.Text.AssignedTo, notification.AssignedTo, true) 
             };
 
-            return SlackHelper.CreateSlackMessage(header, fields, bot, channel, bot.GetSetting("standardColor"));
+            return SlackHelper.CreateSlackMessage(header, fields, slackConfiguration, channel, slackConfiguration.StandardColor);
         }
     }
 }

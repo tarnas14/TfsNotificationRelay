@@ -11,35 +11,32 @@
  * (at your option) any later version. See included file COPYING for details.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DevCore.TfsNotificationRelay.Configuration;
-
 namespace DevCore.TfsNotificationRelay.Slack
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     class SlackHelper
     {
-        public static Slack.Message CreateSlackMessage(IEnumerable<string> lines, BotElement bot, string channel, string color) 
+        public static Message CreateSlackMessage(IEnumerable<string> lines, SlackConfiguration slackConfiguration, string channel, string color) 
         {
-            if (lines == null || lines.Count() == 0) return null;
+            if (lines == null || !lines.Any()) return null;
 
             string header = lines.First();
             var fields = from line in lines.Skip(1) select new AttachmentField() { Value = line, IsShort = false };
 
-            return CreateSlackMessage(header, fields.ToList(), bot, channel, color);
+            return CreateSlackMessage(header, fields.ToList(), slackConfiguration, channel, color);
         }
 
-        public static Slack.Message CreateSlackMessage(string header, IList<AttachmentField> fields, BotElement bot, string channel, string color)
+        public static Message CreateSlackMessage(string header, IList<AttachmentField> fields, SlackConfiguration slackConfiguration, string channel, string color)
         {
             if (header == null) return null;
 
-            var message = new Slack.Message()
+            var message = new Message()
             {
                 Channel = channel,
-                Username = bot.GetSetting("username"),
+                Username = slackConfiguration.Username,
                 Attachments = new[] { 
                     new Attachment() {
                         Fallback = header,
@@ -49,10 +46,10 @@ namespace DevCore.TfsNotificationRelay.Slack
                     }
                 }
             };
-            if (!String.IsNullOrEmpty(bot.GetSetting("iconUrl")))
-                message.IconUrl = bot.GetSetting("iconUrl");
-            else if (!String.IsNullOrEmpty(bot.GetSetting("iconEmoji")))
-                message.IconEmoji = bot.GetSetting("iconEmoji");
+            if (!String.IsNullOrEmpty(slackConfiguration.IconUrl))
+                message.IconUrl = slackConfiguration.IconUrl;
+            else if (!String.IsNullOrEmpty(slackConfiguration.IconEmoji))
+                message.IconEmoji = slackConfiguration.IconEmoji;
 
             return message;
         }
