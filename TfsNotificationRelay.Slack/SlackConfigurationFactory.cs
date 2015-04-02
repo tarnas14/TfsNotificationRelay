@@ -27,7 +27,13 @@ namespace DevCore.TfsNotificationRelay.Slack
                 StandardColor = standardColor,
                 SuccessColor = successColor,
                 ErrorColor = errorColor,
-                Bot = slackBot
+                Bot = slackBot,
+                TextFormatting = new SlackConfiguration.Formatting
+                {
+                    PushFormat = slackBot.Text.PushFormat,
+                    Pushed = slackBot.Text.Pushed,
+                    ForcePushed = slackBot.Text.ForcePushed,
+                }
             };
         }
 
