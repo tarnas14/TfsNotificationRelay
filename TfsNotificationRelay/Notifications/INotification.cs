@@ -19,6 +19,8 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using Configuration;
+
     public interface INotification
     {
         string TeamProjectCollection { get; set; }
@@ -27,10 +29,10 @@ namespace DevCore.TfsNotificationRelay.Notifications
         /// Returns the message formatted according the text settings of the bot.
         /// The transform function will be applied to all text from TFS.
         /// </summary>
-        /// <param name="bot"></param>
+        /// <param name="notificationFormatting"></param>
         /// <param name="transform"></param>
         /// <returns></returns>
-        IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform);
+        IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform);
 
         bool IsMatch(string collection, Configuration.EventRuleCollection eventRules);
     }

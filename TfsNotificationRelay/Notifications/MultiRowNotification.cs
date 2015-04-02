@@ -19,20 +19,23 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using Configuration;
+
     public abstract class MultiRowNotification : List<NotificationRow>, INotification
     {
         public string TeamProjectCollection { get; set; }
 
         public int TotalLineCount { get; set; }
 
-        public IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
+        public IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
         {
-            var lines = this.Select(r => r.ToString(bot, transform)).ToList();
+            //todo
+            var lines = new List<string>();// this.Select(r => r.ToString(notificationFormatting, transform)).ToList();
             if (lines != null && lines.Count > 0)
             {
                 if (lines.Count < TotalLineCount)
                 {
-                    lines.Add(bot.Text.LinesSupressedFormat.FormatWith(new { Count = TotalLineCount - lines.Count }));
+                    lines.Add(notificationFormatting.LinesSupressedFormat.FormatWith(new { Count = TotalLineCount - lines.Count }));
                 }
             }
 

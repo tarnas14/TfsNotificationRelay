@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using Configuration;
+
     public class WorkItemChangedNotification : BaseNotification, IWorkItemChangedNotification
     {
         protected static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -42,12 +44,12 @@ namespace DevCore.TfsNotificationRelay.Notifications
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
         }
 
-        private string FormatAction(Configuration.BotElement bot)
+        private string FormatAction(INotificationTextFormatting notificationFormatting)
         {
-            return IsNew ? bot.Text.Created : bot.Text.Updated;
+            return IsNew ? notificationFormatting.Created : notificationFormatting.Updated;
         }
 
-        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
+        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
         {
             var lines = new List<string>();
             var formatter = new
@@ -64,13 +66,18 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 AssignedTo = transform(this.AssignedTo),
                 State = transform(this.State),
                 UserName = transform(this.UserName),
-                Action = FormatAction(bot)
+                Action = FormatAction(notificationFormatting)
             };
-            lines.Add(bot.Text.WorkItemchangedFormat.FormatWith(formatter));
+            lines.Add(notificationFormatting.WorkItemchangedFormat.FormatWith(formatter));
             lines.Add(String.Format("State: {0}", State));
             lines.Add(String.Format("AssignedTo: {0} ", AssignedTo));
 
             return lines;
+        }
+
+        public IList<string> ToMessage(BotElement bot, Func<string, string> transform)
+        {
+            throw new NotImplementedException();
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

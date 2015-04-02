@@ -21,6 +21,8 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using Configuration;
+
     public abstract class BuildNotification : BaseNotification
     {
         protected static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -44,10 +46,10 @@ namespace DevCore.TfsNotificationRelay.Notifications
         {
             get { return RequestedForDisplayName; }
         }
-        protected string FormatBuildDuration(Configuration.BotElement bot)
+        protected string FormatBuildDuration(INotificationTextFormatting notificationFormatting)
         {
             var duration = FinishTime - StartTime;
-            return String.IsNullOrEmpty(bot.Text.TimeSpanFormat) ? duration.ToString(@"hh\:mm\:ss") : duration.ToString(bot.Text.TimeSpanFormat);
+            return String.IsNullOrEmpty(notificationFormatting.TimeSpanFormat) ? duration.ToString(@"hh\:mm\:ss") : duration.ToString(notificationFormatting.TimeSpanFormat);
         }
 
         public bool IsSuccessful
@@ -55,7 +57,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
             get { return BuildStatus.HasFlag(BuildStatus.Succeeded); }
         }
 
-        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
+        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -72,10 +74,10 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 StartTime = this.StartTime,
                 FinishTime = this.FinishTime,
                 UserName = transform(this.UserName),
-                BuildDuration = FormatBuildDuration(bot),
+                BuildDuration = FormatBuildDuration(notificationFormatting),
                 DropLocation = this.DropLocation
             };
-            return new[] { bot.Text.BuildFormat.FormatWith(formatter), transform(BuildStatus.ToString()) };
+            return new[] { notificationFormatting.BuildFormat.FormatWith(formatter), transform(BuildStatus.ToString()) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

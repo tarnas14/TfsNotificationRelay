@@ -11,16 +11,11 @@
  * (at your option) any later version. See included file COPYING for details.
  */
 
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Configuration
 {
-    public class TextElement : ConfigurationElement, IKeyedConfigurationElement
+    public class TextElement : ConfigurationElement, IKeyedConfigurationElement, INotificationTextFormatting
     {
         public object Key { get { return Id; } }
 

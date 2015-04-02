@@ -27,8 +27,7 @@ namespace DevCore.TfsNotificationRelay.Slack
                 StandardColor = standardColor,
                 SuccessColor = successColor,
                 ErrorColor = errorColor,
-                Bot = slackBot,
-                TextFormatting = new SlackConfiguration.Formatting
+                NotificationTextFormatting = new NotificationTextFormatting
                 {
                     PushFormat = slackBot.Text.PushFormat,
                     Pushed = slackBot.Text.Pushed,
@@ -60,6 +59,7 @@ namespace DevCore.TfsNotificationRelay.Slack
                     AssignedTo = slackBot.Text.AssignedTo,
                     PullRequestCreatedFormat = slackBot.Text.PullRequestCreatedFormat,
                     PullRequestStatusUpdateFormat = slackBot.Text.PullRequestStatusUpdateFormat,
+                    PullRequestReviewerVoteFormat = slackBot.Text.PullRequestReviewerVoteFormat,
                     VoteApproved = slackBot.Text.VoteApproved,
                     VoteRejected = slackBot.Text.VoteRejected,
                     VoteRescinded = slackBot.Text.VoteRescinded,

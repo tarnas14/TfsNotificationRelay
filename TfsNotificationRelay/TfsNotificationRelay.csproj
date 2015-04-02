@@ -108,6 +108,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\INotificationTextFormatting.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Configuration\ConfigurationElementCollectionOfT.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />

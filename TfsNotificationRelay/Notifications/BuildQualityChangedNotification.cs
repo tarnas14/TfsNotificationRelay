@@ -20,12 +20,14 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using Configuration;
+
     public class BuildQualityChangedNotification : BuildNotification
     {
         public string OldValue { get; set; }
         public string NewValue { get; set; }
 
-        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
+        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -42,12 +44,12 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 StartTime = this.StartTime,
                 FinishTime = this.FinishTime,
                 UserName = transform(this.UserName),
-                BuildDuration = FormatBuildDuration(bot),
+                BuildDuration = FormatBuildDuration(notificationFormatting),
                 DropLocation = this.DropLocation,
-                NewValue = this.NewValue == null ? bot.Text.BuildQualityNotSet : transform(this.NewValue),
-                OldValue = this.OldValue == null ? bot.Text.BuildQualityNotSet : transform(this.OldValue)
+                NewValue = this.NewValue == null ? notificationFormatting.BuildQualityNotSet : transform(this.NewValue),
+                OldValue = this.OldValue == null ? notificationFormatting.BuildQualityNotSet : transform(this.OldValue)
             };
-            return new[] { bot.Text.BuildQualityChangedFormat.FormatWith(formatter) };
+            return new[] { notificationFormatting.BuildQualityChangedFormat.FormatWith(formatter) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

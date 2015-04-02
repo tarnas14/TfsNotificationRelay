@@ -1,7 +1,6 @@
 namespace DevCore.TfsNotificationRelay.Notifications
 {
     using System;
-    using System.Collections.Generic;
     using Microsoft.TeamFoundation.Build.Server;
 
     public interface IBuildCompletionNotification : INotification
@@ -21,7 +20,6 @@ namespace DevCore.TfsNotificationRelay.Notifications
         string DisplayName { get; }
         bool IsSuccessful { get; }
         string TeamProjectCollection { get; set; }
-        new IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform);
         bool IsMatch(string collection, Configuration.EventRuleCollection eventRules);
     }
 }

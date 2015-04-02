@@ -20,6 +20,8 @@ using Microsoft.TeamFoundation.Git.Common;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using Configuration;
+
     public class PullRequestStatusUpdateNotification : BaseNotification
     {
         protected readonly static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -33,13 +35,13 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public int PrId { get; set; }
         public string PrUrl { get; set; }
         public string PrTitle { get; set; }
-        private string FormatAction(Configuration.BotElement bot)
+        private string FormatAction(INotificationTextFormatting notificationFormatting)
         {
             switch (Status)
                 {
-                    case PullRequestStatus.Abandoned: return bot.Text.Abandoned;
-                    case PullRequestStatus.Active: return bot.Text.Reactivated;
-                    case PullRequestStatus.Completed: return bot.Text.Completed;
+                    case PullRequestStatus.Abandoned: return notificationFormatting.Abandoned;
+                    case PullRequestStatus.Active: return notificationFormatting.Reactivated;
+                    case PullRequestStatus.Completed: return notificationFormatting.Completed;
                     default:
                         return String.Format("updated status to {0} for", Status.ToString());
                 }
@@ -49,7 +51,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
         }
 
-        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
+        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -63,9 +65,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 PrUrl = this.PrUrl,
                 PrTitle = transform(this.PrTitle),
                 UserName = transform(this.UserName),
-                Action = FormatAction(bot)
+                Action = FormatAction(notificationFormatting)
             };
-            return new[] { bot.Text.PullRequestStatusUpdateFormat.FormatWith(formatter) };
+            return new[] { notificationFormatting.PullRequestStatusUpdateFormat.FormatWith(formatter) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)
