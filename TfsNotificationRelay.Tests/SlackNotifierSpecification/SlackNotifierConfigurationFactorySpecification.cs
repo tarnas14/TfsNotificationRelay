@@ -1,6 +1,9 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification
 {
+    using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Slack;
+    using FakeItEasy;
+    using FakeItEasy.ExtensionSyntax.Full;
     using NUnit.Framework;
 
     [TestFixture]
@@ -28,6 +31,19 @@
 
             //then
             Assert.That(config.Channels, Is.EquivalentTo(expected));
+        }
+
+        [Test]
+        public void ShouldStoreBotElementThatWasUsedToInitializeIt()
+        {
+            //given
+            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\slackNotifierTestConfig.config");
+
+            //when
+            var config = new SlackConfigurationFactory().GetConfiguration(slackBot);
+
+            //then
+            Assert.That(config.Bot, Is.EqualTo(slackBot));
         }
 
         [Test]
@@ -97,56 +113,6 @@
 
             //then
             Assert.That(config.IconEmoji, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ShouldReadTextFormats()
-        {
-            //given
-
-            //when
-            var config = LoadTestConfig();
-
-            //then
-            var formatting = config.NotificationTextFormatting;
-            Assert.That(formatting.PushFormat, Is.EqualTo("pushFormat"));
-            Assert.That(formatting.Pushed, Is.EqualTo("pushed"));
-            Assert.That(formatting.ForcePushed, Is.EqualTo("forcePushed"));
-            Assert.That(formatting.Commit, Is.EqualTo("commit"));
-            Assert.That(formatting.RefPointer, Is.EqualTo("refPointer"));
-            Assert.That(formatting.Deleted, Is.EqualTo("deleted"));
-            Assert.That(formatting.CommitFormat, Is.EqualTo("commitFormat"));
-            Assert.That(formatting.LinesSupressedFormat, Is.EqualTo("linesSuppressedFormat"));
-            Assert.That(formatting.DateTimeFormat, Is.EqualTo("dateTimeFormat"));
-            Assert.That(formatting.TimeSpanFormat, Is.EqualTo("timeSpanFormat"));
-            Assert.That(formatting.BuildFormat, Is.EqualTo("buildFormat"));
-            Assert.That(formatting.BuildQualityChangedFormat, Is.EqualTo("buildQualityChangedFormat"));
-            Assert.That(formatting.BuildQualityNotSet, Is.EqualTo("buildQualityNotSet"));
-            Assert.That(formatting.ProjectCreatedFormat, Is.EqualTo("projectCreatedFormat"));
-            Assert.That(formatting.ProjectDeletedFormat, Is.EqualTo("projectDeletedFormat"));
-            Assert.That(formatting.CheckinFormat, Is.EqualTo("checkinFormat"));
-            Assert.That(formatting.ProjectLinkFormat, Is.EqualTo("projectLinkFormat"));
-            Assert.That(formatting.ChangeCountAddFormat, Is.EqualTo("changeCountAddFormat"));
-            Assert.That(formatting.ChangeCountDeleteFormat, Is.EqualTo("changeCountDeleteFormat"));
-            Assert.That(formatting.ChangeCountEditFormat, Is.EqualTo("changeCountEditFormat"));
-            Assert.That(formatting.ChangeCountRenameFormat, Is.EqualTo("changeCountRenameFormat"));
-            Assert.That(formatting.ChangeCountSourceRenameFormat, Is.EqualTo("changeCountSourceRenameFormat"));
-            Assert.That(formatting.ChangeCountUnknownFormat, Is.EqualTo("changeCountUnknownFormat"));
-            Assert.That(formatting.WorkItemchangedFormat, Is.EqualTo("workItemChangedFormat"));
-            Assert.That(formatting.Updated, Is.EqualTo("updated"));
-            Assert.That(formatting.Created, Is.EqualTo("created"));
-            Assert.That(formatting.State, Is.EqualTo("state"));
-            Assert.That(formatting.AssignedTo, Is.EqualTo("assignedTo"));
-            Assert.That(formatting.PullRequestCreatedFormat, Is.EqualTo("pullRequestCreatedFormat"));
-            Assert.That(formatting.PullRequestStatusUpdateFormat, Is.EqualTo("pullRequestStatusUpdateFormat"));
-            Assert.That(formatting.PullRequestReviewerVoteFormat, Is.EqualTo("pullRequestReviewerVoteFormat"));
-            Assert.That(formatting.VoteApproved, Is.EqualTo("voteApproved"));
-            Assert.That(formatting.VoteRejected, Is.EqualTo("voteRejected"));
-            Assert.That(formatting.VoteRescinded, Is.EqualTo("voteRescinded"));
-            Assert.That(formatting.Completed, Is.EqualTo("completed"));
-            Assert.That(formatting.Abandoned, Is.EqualTo("abandoned"));
-            Assert.That(formatting.Reactivated, Is.EqualTo("reactivated"));
-
         }
     }
 }

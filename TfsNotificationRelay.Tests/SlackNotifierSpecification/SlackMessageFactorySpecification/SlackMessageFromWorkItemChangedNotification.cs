@@ -12,7 +12,7 @@
     {
         protected override void ReturnFromNotification(params string[] notificationLines)
         {
-            A.CallTo(() => Notification.ToMessage(A<INotificationTextFormatting>.Ignored, A<Func<string, string>>.Ignored))
+            A.CallTo(() => Notification.ToMessage(A<BotElement>.Ignored, A<Func<string, string>>.Ignored))
                 .Returns(new List<string>(notificationLines));
         }
     }

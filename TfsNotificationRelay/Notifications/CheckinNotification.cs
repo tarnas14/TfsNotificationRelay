@@ -20,8 +20,6 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
-    using Configuration;
-
     public class CheckinNotification : BaseNotification
     {
         protected static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -32,9 +30,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public int ChangesetId { get; set; }
         public Dictionary<string, string> Projects { get; set; }
         public string Comment { get; set; }
-        private string FormatProjectLinks(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
+        private string FormatProjectLinks(Configuration.BotElement bot, Func<string, string> transform)
         {
-            return String.Join(", ", Projects.Select(x => notificationFormatting.ProjectLinkFormat
+            return String.Join(", ", Projects.Select(x => bot.Text.ProjectLinkFormat
                 .FormatWith(new { ProjectName = transform(x.Key), ProjectUrl = x.Value })));
         }
         public string UserName
@@ -42,7 +40,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
         }
 
-        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
+        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -52,9 +50,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 ChangesetId = this.ChangesetId,
                 Comment = transform(this.Comment),
                 UserName = transform(this.UserName),
-                ProjectLinks = FormatProjectLinks(notificationFormatting, transform)
+                ProjectLinks = FormatProjectLinks(bot, transform)
             };
-            return new[] { notificationFormatting.CheckinFormat.FormatWith(formatter) };
+            return new[] { bot.Text.CheckinFormat.FormatWith(formatter) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

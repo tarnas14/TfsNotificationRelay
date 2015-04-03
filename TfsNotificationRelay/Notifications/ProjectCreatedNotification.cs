@@ -20,8 +20,6 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
-    using Configuration;
-
     public class ProjectCreatedNotification : BaseNotification
     {
         protected static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -29,7 +27,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public string ProjectUrl { get; set; }
         public string ProjectName { get; set; }
 
-        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
+        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -38,7 +36,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 ProjectName = transform(this.ProjectName),
             };
 
-            return new[] { notificationFormatting.ProjectCreatedFormat.FormatWith(formatter) };
+            return new[] { bot.Text.ProjectCreatedFormat.FormatWith(formatter) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

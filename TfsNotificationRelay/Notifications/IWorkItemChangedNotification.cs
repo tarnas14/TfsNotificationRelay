@@ -1,5 +1,8 @@
 namespace DevCore.TfsNotificationRelay.Notifications
 {
+    using System;
+    using System.Collections.Generic;
+
     public interface IWorkItemChangedNotification : INotification
     {
         bool IsNew { get; set; }
@@ -16,6 +19,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         string State { get; set; }
         string UserName { get; }
         string TeamProjectCollection { get; set; }
+        IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform);
         bool IsMatch(string collection, Configuration.EventRuleCollection eventRules);
     }
 }

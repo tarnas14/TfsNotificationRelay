@@ -19,8 +19,6 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
-    using Configuration;
-
     public class PullRequestCreatedNotification : BaseNotification
     {
         protected readonly static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -39,7 +37,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
         }
 
-        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
+        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -54,7 +52,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 UserName = transform(this.UserName),
             };
 
-            return new[] { notificationFormatting.PullRequestCreatedFormat.FormatWith(formatter) };
+            return new[] { bot.Text.PullRequestCreatedFormat.FormatWith(formatter) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

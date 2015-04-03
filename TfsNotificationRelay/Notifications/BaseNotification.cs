@@ -19,13 +19,11 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
-    using Configuration;
-
     public abstract class BaseNotification : INotification
     {
         public string TeamProjectCollection { get; set; }
 
-        public abstract IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform);
+        public abstract IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform);
 
         public abstract bool IsMatch(string collection, Configuration.EventRuleCollection eventRules);
     }
