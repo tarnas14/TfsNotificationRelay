@@ -19,8 +19,6 @@ using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
-    using Configuration;
-
     public class PullRequestReviewerVoteNotification : BaseNotification
     {
         protected readonly static Configuration.SettingsElement settings = Configuration.TfsNotificationRelaySection.Instance.Settings;
@@ -34,13 +32,13 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public int PrId { get; set; }
         public string PrUrl { get; set; }
         public string PrTitle { get; set; }
-        private string FormatAction(INotificationTextFormatting notificationFormatting)
+        private string FormatAction(Configuration.BotElement bot)
         {
             switch (Vote)
             {
-                case -10: return notificationFormatting.VoteRejected;
-                case 0: return notificationFormatting.VoteRescinded;
-                case 10: return notificationFormatting.VoteApproved;
+                case -10: return bot.Text.VoteRejected;
+                case 0: return bot.Text.VoteRescinded;
+                case 10: return bot.Text.VoteApproved;
                 default:
                     return String.Format("voted {0} on", Vote);
             }
@@ -50,7 +48,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
         }
 
-        public override IList<string> ToMessage(INotificationTextFormatting notificationFormatting, Func<string, string> transform)
+        public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
         {
             var formatter = new
             {
@@ -64,9 +62,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 PrUrl = this.PrUrl,
                 PrTitle = transform(this.PrTitle),
                 UserName = transform(this.UserName),
-                Action = FormatAction(notificationFormatting)
+                Action = FormatAction(bot)
             };
-            return new[] { notificationFormatting.PullRequestReviewerVoteFormat.FormatWith(formatter) };
+            return new[] { bot.Text.PullRequestReviewerVoteFormat.FormatWith(formatter) };
         }
 
         public override bool IsMatch(string collection, Configuration.EventRuleCollection eventRules)

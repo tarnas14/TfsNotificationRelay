@@ -31,6 +31,19 @@
         }
 
         [Test]
+        public void ShouldStoreBotElementThatWasUsedToInitializeIt()
+        {
+            //given
+            var slackBot = TestConfigurationHelper.LoadSlackBot(@"SlackNotifierSpecification\slackNotifierTestConfig.config");
+
+            //when
+            var config = new SlackConfigurationFactory().GetConfiguration(slackBot);
+
+            //then
+            Assert.That(config.Bot, Is.EqualTo(slackBot));
+        }
+
+        [Test]
         public void ShouldReadUsername()
         {
             //given
@@ -108,7 +121,7 @@
             var config = LoadTestConfig();
 
             //then
-            var formatting = config.NotificationTextFormatting;
+            var formatting = config.TextFormatting;
             Assert.That(formatting.PushFormat, Is.EqualTo("pushFormat"));
             Assert.That(formatting.Pushed, Is.EqualTo("pushed"));
             Assert.That(formatting.ForcePushed, Is.EqualTo("forcePushed"));
@@ -139,7 +152,6 @@
             Assert.That(formatting.AssignedTo, Is.EqualTo("assignedTo"));
             Assert.That(formatting.PullRequestCreatedFormat, Is.EqualTo("pullRequestCreatedFormat"));
             Assert.That(formatting.PullRequestStatusUpdateFormat, Is.EqualTo("pullRequestStatusUpdateFormat"));
-            Assert.That(formatting.PullRequestReviewerVoteFormat, Is.EqualTo("pullRequestReviewerVoteFormat"));
             Assert.That(formatting.VoteApproved, Is.EqualTo("voteApproved"));
             Assert.That(formatting.VoteRejected, Is.EqualTo("voteRejected"));
             Assert.That(formatting.VoteRescinded, Is.EqualTo("voteRescinded"));

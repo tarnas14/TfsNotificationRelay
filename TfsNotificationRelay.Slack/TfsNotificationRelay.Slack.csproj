@@ -88,7 +88,6 @@
   <ItemGroup>
     <Compile Include="Attachment.cs" />
     <Compile Include="AttachmentField.cs" />
-    <Compile Include="NotificationTextFormatting.cs" />
     <Compile Include="ISlackClient.cs" />
     <Compile Include="ISlackConfigurationFactory.cs" />
     <Compile Include="ISlackMessageFactory.cs" />

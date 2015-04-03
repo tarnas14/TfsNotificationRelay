@@ -13,16 +13,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
-    using Configuration;
-
     public class BuildCompletionNotification : BuildNotification, IBuildCompletionNotification
     {
-        public IList<string> ToMessage(BotElement bot, Func<string, string> transform)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
