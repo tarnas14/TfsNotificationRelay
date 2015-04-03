@@ -44,16 +44,28 @@ namespace DevCore.TfsNotificationRelay.Slack
             var config = _slackConfigurationFactory.GetConfiguration(bot);
             var tasks = new List<Task>();
 
-            foreach (string channel in config.Channels)
+            tasks.AddRange(GetMessageForChannels(config.Channels, notification, config));
+
+            var buildNotification = notification as IBuildCompletionNotification;
+
+            if (buildNotification != null && !buildNotification.IsSuccessful)
+            {
+                tasks.AddRange(GetMessageForChannels(config.NotableEventsChannels, notification, config));
+            }
+
+            await Task.WhenAll(tasks);
+        }
+
+        private IEnumerable<Task> GetMessageForChannels(IEnumerable<string> channels, INotification notification, SlackConfiguration config)
+        {
+            foreach (string channel in channels)
             {
                 Message slackMessage = _slackMessageFactory.GetMessage(notification, config, channel);
                 if (slackMessage != null)
                 {
-                    tasks.Add(_slackClient.SendMessageAsync(slackMessage, config.WebhookUrl).ContinueWith(t => t.Result.EnsureSuccessStatusCode()));
+                    yield return _slackClient.SendMessageAsync(slackMessage, config.WebhookUrl).ContinueWith(t => t.Result.EnsureSuccessStatusCode());
                 }
             }
-
-            await Task.WhenAll(tasks);
         }
     }
 }

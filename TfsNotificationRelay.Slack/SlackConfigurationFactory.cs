@@ -16,6 +16,7 @@ namespace DevCore.TfsNotificationRelay.Slack
             var standardColor = slackBot.GetSetting("standardColor");
             var successColor = slackBot.GetSetting("successColor");
             var errorColor = slackBot.GetSetting("errorColor");
+            var notableEventsChannels = GetChannels(slackBot.GetSetting("notableEventsChannels"));
 
             return new SlackConfiguration
             {
@@ -27,7 +28,8 @@ namespace DevCore.TfsNotificationRelay.Slack
                 StandardColor = standardColor,
                 SuccessColor = successColor,
                 ErrorColor = errorColor,
-                Bot = slackBot
+                Bot = slackBot,
+                NotableEventsChannels = notableEventsChannels
             };
         }
 

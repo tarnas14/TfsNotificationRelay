@@ -1,6 +1,7 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification
 {
     using System;
+    using System.Collections.Generic;
     using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Notifications;
     using DevCore.TfsNotificationRelay.Slack;
@@ -22,6 +23,10 @@
             _slackClient = A.Fake<ISlackClient>();
 
             _slackMessageFactory = A.Fake<ISlackMessageFactory>();
+            A.CallTo(
+                () =>
+                    _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<SlackConfiguration>.Ignored, A<String>.Ignored))
+                .ReturnsLazily((INotification notification, SlackConfiguration slackConfig, string channel) => new Message { Channel = channel });
 
             _slackConfigurationFactory = A.Fake<ISlackConfigurationFactory>();
 
@@ -29,7 +34,71 @@
         }
 
         [Test]
-        public async void ShouldNotifyAllChannelsAboutTheNotificationViaConfiguredWebhookUrl()
+        public void ShouldNotifyAllChannelsAboutAGenericNotification()
+        {
+            ShouldNotifyAllChannelsAboutNotification(A.Fake<INotification>());
+        }
+
+        [Test]
+        public void ShouldNotifyAllChannelsAboutBuildCompletionNotification()
+        {
+            ShouldNotifyAllChannelsAboutNotification(A.Fake<IBuildCompletionNotification>());
+        }
+
+        [Test]
+        public async void ShouldNotifyNormalAndNotableEventsChannelsAboutFailedBuild()
+        {
+            //given
+            var slackConfiguration = new SlackConfiguration
+            {
+                Channels =  new[]
+                {
+                    "#normal", "channels"
+                },
+                NotableEventsChannels = new[]
+                {
+                    "#notable", "events"
+                }
+            };
+            A.CallTo(() => _slackConfigurationFactory.GetConfiguration(A<BotElement>.Ignored))
+                .Returns(slackConfiguration);
+
+            var failedBuildNotification = A.Fake<IBuildCompletionNotification>();
+            A.CallTo(() => failedBuildNotification.IsSuccessful).Returns(false);
+
+            //when
+            await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), failedBuildNotification, A.Fake<BotElement>());
+
+            //then
+            ShouldHaveNotifiedChannels(slackConfiguration.Channels);
+            ShouldHaveNotifiedChannels(slackConfiguration.NotableEventsChannels);
+        }
+
+        [Test]
+        public async void ShouldNotNotifyNotableEventsChannelsAboutSuccessfulBuild()
+        {
+            //given
+            var slackConfiguration = new SlackConfiguration
+            {
+                NotableEventsChannels = new[]
+                {
+                    "#notable", "events"
+                }
+            };
+            A.CallTo(() => _slackConfigurationFactory.GetConfiguration(A<BotElement>.Ignored))
+                .Returns(slackConfiguration);
+
+            var failedBuildNotification = A.Fake<IBuildCompletionNotification>();
+            A.CallTo(() => failedBuildNotification.IsSuccessful).Returns(true);
+
+            //when
+            await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), failedBuildNotification, A.Fake<BotElement>());
+
+            //then
+            ShouldNotHaveNotifiedChannels(slackConfiguration.NotableEventsChannels);
+        }
+
+        private async void ShouldNotifyAllChannelsAboutNotification(INotification notification)
         {
             //given
             var slackConfiguration = new SlackConfiguration
@@ -37,31 +106,35 @@
                 Channels = new[]
                 {
                     "#general",
-                    "#b"
-                },
-                WebhookUrl = "testWebhookUrl"
+                    "b"
+                }
             };
-
             A.CallTo(() => _slackConfigurationFactory.GetConfiguration(A<BotElement>.Ignored))
                 .Returns(slackConfiguration);
 
-            A.CallTo(
-                () =>
-                    _slackMessageFactory.GetMessage(A<INotification>.Ignored, A<SlackConfiguration>.Ignored, A<String>.Ignored))
-                .ReturnsLazily((INotification notification, SlackConfiguration slackConfig, string channel) => new Message { Channel = channel });
-
             //when;
-            await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), A.Fake<INotification>(), A.Fake<BotElement>());
+            await _slackNotifier.NotifyAsync(A.Fake<TeamFoundationRequestContext>(), notification, A.Fake<BotElement>());
 
             //then
-            A.CallTo(() => _slackClient.SendMessageAsync(
-                A<Message>.That.Matches(msg => msg.Channel == "#general"),
-                A<string>.That.Matches(url => slackConfiguration.WebhookUrl.Equals(url))))
-                .MustHaveHappened(Repeated.Exactly.Once);
-            A.CallTo(() => _slackClient.SendMessageAsync(
-                A<Message>.That.Matches(msg => msg.Channel == "#b"), 
-                A<string>.That.Matches(url => slackConfiguration.WebhookUrl.Equals(url))))
-                .MustHaveHappened(Repeated.Exactly.Once);
+            ShouldHaveNotifiedChannels(slackConfiguration.Channels);
+        }
+
+        private void ShouldHaveNotifiedChannels(IEnumerable<string> channels)
+        {
+            foreach (var channel in channels)
+            {
+                A.CallTo(() => _slackClient.SendMessageAsync(A<Message>.That.Matches(msg => msg.Channel == channel), A<string>.Ignored))
+                    .MustHaveHappened(Repeated.Exactly.Once);
+            }
+        }
+
+        private void ShouldNotHaveNotifiedChannels(IEnumerable<string> channels)
+        {
+            foreach (var channel in channels)
+            {
+                A.CallTo(() => _slackClient.SendMessageAsync(A<Message>.That.Matches(msg => msg.Channel == channel), A<string>.Ignored))
+                    .MustNotHaveHappened();
+            }
         }
     }
 }

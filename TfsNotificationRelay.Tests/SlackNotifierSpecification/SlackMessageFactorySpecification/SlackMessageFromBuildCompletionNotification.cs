@@ -18,7 +18,7 @@
         }
 
         [Test]
-        public void ShouldUserErrorColorForNotificationAboutUnsuccessfullBuild()
+        public void ShouldUseErrorColorForNotificationAboutUnsuccessfullBuild()
         {
             //given
             A.CallTo(() => Notification.IsSuccessful).Returns(false);
@@ -33,7 +33,7 @@
         }
 
         [Test]
-        public void ShouldUserSuccessColorForNotificationAboutSuccessfullBuild()
+        public void ShouldUseSuccessColorForNotificationAboutSuccessfullBuild()
         {
             //given
             A.CallTo(() => Notification.IsSuccessful).Returns(true);

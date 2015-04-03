@@ -114,5 +114,22 @@
             //then
             Assert.That(config.IconEmoji, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void ShouldReadNotableEventsChannels()
+        {
+            //given
+            var expected = new[]
+            {
+                "#notable",
+                "events"
+            };
+
+            //when
+            var config = LoadTestConfig();
+
+            //then
+            Assert.That(config.NotableEventsChannels, Is.EquivalentTo(expected));
+        }
     }
 }
