@@ -3,6 +3,7 @@ namespace DevCore.TfsNotificationRelay.Slack
     using System.Linq;
     using Configuration;
     using Notifications;
+    using System.Collections.Generic;
 
     public class SlackMessageFactory : ISlackMessageFactory
     {
@@ -35,6 +36,26 @@ namespace DevCore.TfsNotificationRelay.Slack
             };
 
             return SlackHelper.CreateSlackMessage(header, fields, bot, channel, bot.GetSetting("standardColor"));
+        }
+
+        public IEnumerable<Message> GetMessages(INotification notification, SlackConfiguration slackConfiguration)
+        {
+            return GetMessages((dynamic) notification, slackConfiguration);
+        }
+
+        private IEnumerable<Message> GetMessages(IBuildCompletionNotification notification,
+            SlackConfiguration slackConfiguration)
+        {
+            var messages = new List<Message>(slackConfiguration.Channels.Select(channel => ToSlackMessage(notification, slackConfiguration.Bot, channel)));
+
+            if (!notification.IsSuccessful)
+            {
+                messages.AddRange(
+                    slackConfiguration.NotableEventsChannels.Select(
+                        channel => ToSlackMessage(notification, slackConfiguration.Bot, channel)));
+            }
+
+            return messages;
         }
     }
 }

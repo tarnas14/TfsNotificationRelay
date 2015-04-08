@@ -46,5 +46,34 @@
 
             Assert.That(firstAttachment.Color, Is.EqualTo(SlackConfiguration.SuccessColor));
         }
+
+        [Test]
+        public void ShouldGenerateMessagesForBothNormalChannelsAndNotableEventChannelsOnUnsuccessfullBuild()
+        {
+            //given
+            A.CallTo(() => Notification.IsSuccessful).Returns(false);
+            var expectedChannels = SlackConfiguration.Channels.Concat(SlackConfiguration.NotableEventsChannels);
+
+            //when
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
+
+            //then
+            var actualChannels = messages.Select(message => message.Channel);
+            Assert.That(actualChannels, Is.EquivalentTo(expectedChannels));
+        }
+
+        [Test]
+        public void ShouldGenerateMessagesOnlyForNormalChannelsOnSuccessfullBuild()
+        {
+            //given
+            A.CallTo(() => Notification.IsSuccessful).Returns(true);
+
+            //when
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
+
+            //then
+            var actualChannels = messages.Select(message => message.Channel);
+            Assert.That(actualChannels, Is.EquivalentTo(SlackConfiguration.Channels));
+        }
     }
 }
