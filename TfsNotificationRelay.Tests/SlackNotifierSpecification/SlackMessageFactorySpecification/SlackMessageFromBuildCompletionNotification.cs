@@ -24,12 +24,12 @@
             A.CallTo(() => Notification.IsSuccessful).Returns(false);
 
             //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, "channel");
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
 
             //then
-            var firstAttachment = message.Attachments.Single();
+            var attachments = messages.SelectMany(message => message.Attachments);
 
-            Assert.That(firstAttachment.Color, Is.EqualTo(SlackConfiguration.ErrorColor));
+            Assert.That(attachments.All(attachment => attachment.Color == SlackConfiguration.ErrorColor));
         }
 
         [Test]
@@ -39,12 +39,12 @@
             A.CallTo(() => Notification.IsSuccessful).Returns(true);
 
             //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, "channel");
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
 
             //then
-            var firstAttachment = message.Attachments.Single();
+            var attachments = messages.SelectMany(message => message.Attachments);
 
-            Assert.That(firstAttachment.Color, Is.EqualTo(SlackConfiguration.SuccessColor));
+            Assert.That(attachments.All(attachment => attachment.Color == SlackConfiguration.SuccessColor));
         }
 
         [Test]

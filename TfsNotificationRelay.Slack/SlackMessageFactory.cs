@@ -7,11 +7,6 @@ namespace DevCore.TfsNotificationRelay.Slack
 
     public class SlackMessageFactory : ISlackMessageFactory
     {
-        public Message GetMessage(INotification notification, SlackConfiguration slackConfiguration, string channel)
-        {
-            return ToSlackMessage((dynamic) notification, slackConfiguration.Bot, channel);
-        }
-
         private Message ToSlackMessage(INotification notification, BotElement bot, string channel)
         {
             var lines = notification.ToMessage(bot, s => s);
@@ -40,10 +35,24 @@ namespace DevCore.TfsNotificationRelay.Slack
 
         public IEnumerable<Message> GetMessages(INotification notification, SlackConfiguration slackConfiguration)
         {
-            return GetMessages((dynamic) notification, slackConfiguration);
+            return ToSlackMessages((dynamic)notification, slackConfiguration);
         }
 
-        private IEnumerable<Message> GetMessages(IBuildCompletionNotification notification,
+        private IEnumerable<Message> ToSlackMessages(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
+        {
+            return
+                slackConfiguration.Channels.Select(
+                    channel => ToSlackMessage(notification, slackConfiguration.Bot, channel));
+        }
+
+        private IEnumerable<Message> ToSlackMessages(INotification notification, SlackConfiguration slackConfiguration)
+        {
+            return
+                slackConfiguration.Channels.Select(
+                    channel => ToSlackMessage(notification, slackConfiguration.Bot, channel));
+        }
+
+        private IEnumerable<Message> ToSlackMessages(IBuildCompletionNotification notification,
             SlackConfiguration slackConfiguration)
         {
             var messages = new List<Message>(slackConfiguration.Channels.Select(channel => ToSlackMessage(notification, slackConfiguration.Bot, channel)));

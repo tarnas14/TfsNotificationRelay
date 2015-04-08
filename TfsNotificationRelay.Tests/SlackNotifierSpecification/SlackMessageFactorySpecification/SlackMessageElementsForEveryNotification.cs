@@ -34,13 +34,13 @@
         }
 
         [Test]
-        public void ShouldAddUserNameToMessage()
+        public void ShouldAddUsernameToEveryMessage()
         {
             //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, "channel");
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
 
             //then
-            Assert.That(message.Username, Is.EqualTo(SlackConfiguration.Username));
+            Assert.That(messages.All(message => message.Username == SlackConfiguration.Username));
         }
 
         [Test]
@@ -51,27 +51,14 @@
             const string expectedFallback = "fallback";
 
             //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, "channel");
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
 
             //then
-            var actualFallback = message.Attachments.First().Fallback;
-            var actualPretext = message.Attachments.First().Pretext;
+            var actualFallbacks = messages.Select(message => message.Attachments.First().Fallback);
+            var actualPretexts = messages.Select(message => message.Attachments.First().Pretext);
 
-            Assert.That(actualFallback, Is.EqualTo(expectedFallback));
-            Assert.That(actualPretext, Is.EqualTo(expectedFallback));
-        }
-
-        [Test]
-        public void ShouldFillMessageChannel()
-        {
-            //given
-            const string expectedChannel = "expectedChannel";
-
-            //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, expectedChannel);
-
-            //then
-            Assert.That(message.Channel, Is.EqualTo(expectedChannel));
+            Assert.That(actualFallbacks.All(fallback => fallback == expectedFallback));
+            Assert.That(actualPretexts.All(pretext => pretext == expectedFallback));
         }
     }
 }

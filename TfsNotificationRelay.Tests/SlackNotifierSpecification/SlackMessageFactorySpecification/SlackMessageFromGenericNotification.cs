@@ -11,10 +11,11 @@
         public void ShouldUseStandardColorForGenericNotifications()
         {
             //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, "anyChannel");
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
 
             //then
-            Assert.That(message.Attachments.All(attachment => attachment.Color == SlackConfiguration.StandardColor));
+            var attachments = messages.SelectMany(message => message.Attachments);
+            Assert.That(attachments.All(attachment => attachment.Color == SlackConfiguration.StandardColor));
         }
 
         [Test]
@@ -25,14 +26,17 @@
             var expectedFieldValues = new[] {"notification", "lines"};
 
             //when
-            var message = SlackMessageFactory.GetMessage(Notification, SlackConfiguration, "channel");
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
             
             //then
-            var attachmentFields = message.Attachments.First().Fields;
-            var actualFieldValues = attachmentFields.Select(field => field.Value);
+            foreach(var message in messages)
+            {
+                var attachmentFields = message.Attachments.First().Fields;
+                var actualFieldValues = attachmentFields.Select(field => field.Value);
 
-            Assert.That(actualFieldValues, Is.EquivalentTo(expectedFieldValues));
-            Assert.That(!attachmentFields.Any(field => field.IsShort));
+                Assert.That(actualFieldValues, Is.EquivalentTo(expectedFieldValues));
+                Assert.That(!attachmentFields.Any(field => field.IsShort));
+            }
         }
     }
 }
