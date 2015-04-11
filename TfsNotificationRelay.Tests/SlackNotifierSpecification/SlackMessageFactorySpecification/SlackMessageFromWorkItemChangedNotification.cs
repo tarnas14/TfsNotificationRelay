@@ -78,5 +78,37 @@
 
             Assert.That(colours.All(colour => colour == SlackConfiguration.ErrorColor));
         }
+
+        [Test]
+        public void ShouldNotifyNormalChannelsWhenTaskIsReadyToTest()
+        {
+            //given
+            A.CallTo(() => Notification.IsStateChanged).Returns(true);
+            A.CallTo(() => Notification.State).Returns(SlackConfiguration.ReadyToTest);
+
+            //when
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
+
+            //then
+            var actualChannels = messages.Select(message => message.Channel);
+
+            Assert.That(actualChannels, Is.EquivalentTo(SlackConfiguration.Channels));
+        }
+
+        [Test]
+        public void ShouldSendGreenColourNotificationAboutTasksReadyToTest()
+        {
+            //given
+            A.CallTo(() => Notification.IsStateChanged).Returns(true);
+            A.CallTo(() => Notification.State).Returns(SlackConfiguration.ReadyToTest);
+
+            //when
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
+
+            //then
+            var colours = messages.Select(message => message.Attachments.First().Color);
+
+            Assert.That(colours.All(colour => colour == SlackConfiguration.SuccessColor));
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace DevCore.TfsNotificationRelay.Slack
 
         private IEnumerable<Message> ToSlackMessages(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
         {
-            if (notification.IsAssignmentChanged || !WorkItemIsReturnedFromTesting(notification, slackConfiguration))
+            if (notification.IsAssignmentChanged || !NeedToNotifyChannelsAboutWorkItemStateChange(notification, slackConfiguration))
             {
                 return new Message[] { };
             }
@@ -58,6 +58,16 @@ namespace DevCore.TfsNotificationRelay.Slack
             return
                 slackConfiguration.Channels.Select(
                     channel => ToSlackMessage(notification, slackConfiguration, channel));
+        }
+
+        private bool NeedToNotifyChannelsAboutWorkItemStateChange(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
+        {
+            return WorkItemIsReturnedFromTesting(notification, slackConfiguration) || WorkItemIsReadyForTesting(notification, slackConfiguration);
+        }
+
+        private bool WorkItemIsReadyForTesting(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
+        {
+            return notification.State == slackConfiguration.ReadyToTest;
         }
 
         private bool WorkItemIsReturnedFromTesting(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
@@ -69,10 +79,16 @@ namespace DevCore.TfsNotificationRelay.Slack
 
         private Message ToSlackMessage(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            var colour = WorkItemIsReturnedFromTesting(notification, slackConfiguration)
-                ? slackConfiguration.ErrorColor
-                : slackConfiguration.StandardColor;
-
+            var colour = slackConfiguration.StandardColor;
+            if (WorkItemIsReturnedFromTesting(notification, slackConfiguration))
+            {
+                colour = slackConfiguration.ErrorColor;
+            }
+            else if (WorkItemIsReadyForTesting(notification, slackConfiguration))
+            {
+                colour = slackConfiguration.SuccessColor;
+            }
+            
             string header = notification.ToMessage(slackConfiguration.Bot, s => s).First();
             var fields = new[] { 
                 new AttachmentField(slackConfiguration.Bot.Text.State, notification.State, true), 

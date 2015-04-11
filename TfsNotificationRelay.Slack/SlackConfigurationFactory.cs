@@ -19,6 +19,7 @@ namespace DevCore.TfsNotificationRelay.Slack
             var notableEventsChannels = GetChannels(slackBot.GetSetting("notableEventsChannels"));
             var inProgressState = slackBot.GetSetting("inProgressState");
             var testingState = slackBot.GetSetting("testingState");
+            var readyToTestState = slackBot.GetSetting("readyToTestState");
 
             return new SlackConfiguration
             {
@@ -33,7 +34,8 @@ namespace DevCore.TfsNotificationRelay.Slack
                 Bot = slackBot,
                 NotableEventsChannels = notableEventsChannels,
                 InProgressState = inProgressState,
-                TestingState = testingState
+                TestingState = testingState,
+                ReadyToTest = readyToTestState
             };
         }
 

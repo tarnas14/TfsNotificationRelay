@@ -135,6 +135,7 @@
             //given
             const string expectedTestingState = "testingState";
             const string expectedInProgressState = "inProgressState";
+            const string expectedReadyToTestState = "readyToTestState";
 
             //when
             var config = LoadTestConfig();
@@ -142,6 +143,7 @@
             //then
             Assert.That(config.TestingState, Is.EqualTo(expectedTestingState));
             Assert.That(config.InProgressState, Is.EqualTo(expectedInProgressState));
+            Assert.That(config.ReadyToTest, Is.EqualTo(expectedReadyToTestState));
         }
     }
 }
