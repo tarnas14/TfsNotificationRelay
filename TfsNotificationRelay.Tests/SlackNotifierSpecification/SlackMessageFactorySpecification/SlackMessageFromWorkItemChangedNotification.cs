@@ -34,9 +34,6 @@
         public void ShouldNotNotifyAnyChannelsAboutRandomStateChanges()
         {
             //given
-            SlackConfiguration.TestingState = "testingState";
-            SlackConfiguration.InProgressState = "inProgress";
-
             A.CallTo(() => Notification.IsStateChanged).Returns(true);
             A.CallTo(() => Notification.State).Returns("some state not specified in config");
             A.CallTo(() => Notification.OldState).Returns("some other state not in config");
@@ -52,9 +49,6 @@
         public void ShouldNotifyNormalChannelsWhenTaskComesBackFromTestingToInProgress()
         {
             //given
-            SlackConfiguration.TestingState = "testingState";
-            SlackConfiguration.InProgressState = "inProgress";
-
             A.CallTo(() => Notification.IsStateChanged).Returns(true);
             A.CallTo(() => Notification.State).Returns(SlackConfiguration.InProgressState);
             A.CallTo(() => Notification.OldState).Returns(SlackConfiguration.TestingState);
@@ -66,6 +60,23 @@
             var actualChannels = messages.Select(message => message.Channel);
 
             Assert.That(actualChannels, Is.EquivalentTo(SlackConfiguration.Channels));
+        }
+
+        [Test]
+        public void ShouldSendRedColouredNotificationAboutTasksComingBrackFromTesting()
+        {
+            //given
+            A.CallTo(() => Notification.IsStateChanged).Returns(true);
+            A.CallTo(() => Notification.State).Returns(SlackConfiguration.InProgressState);
+            A.CallTo(() => Notification.OldState).Returns(SlackConfiguration.TestingState);
+
+            //when
+            var messages = SlackMessageFactory.GetMessages(Notification, SlackConfiguration);
+
+            //then
+            var colours = messages.Select(message => message.Attachments.First().Color);
+
+            Assert.That(colours.All(colour => colour == SlackConfiguration.ErrorColor));
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿namespace TfsNotificationRelay.Tests.SlackNotifierSpecification
 {
-    using DevCore.TfsNotificationRelay.Configuration;
     using DevCore.TfsNotificationRelay.Slack;
-    using FakeItEasy;
-    using FakeItEasy.ExtensionSyntax.Full;
     using NUnit.Framework;
 
     [TestFixture]
@@ -130,6 +127,21 @@
 
             //then
             Assert.That(config.NotableEventsChannels, Is.EquivalentTo(expected));
+        }
+
+        [Test]
+        public void ShouldReadConfigurationOfStateProperties()
+        {
+            //given
+            const string expectedTestingState = "testingState";
+            const string expectedInProgressState = "inProgressState";
+
+            //when
+            var config = LoadTestConfig();
+
+            //then
+            Assert.That(config.TestingState, Is.EqualTo(expectedTestingState));
+            Assert.That(config.InProgressState, Is.EqualTo(expectedInProgressState));
         }
     }
 }

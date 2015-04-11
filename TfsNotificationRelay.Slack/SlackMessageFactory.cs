@@ -1,41 +1,51 @@
 namespace DevCore.TfsNotificationRelay.Slack
 {
     using System.Linq;
-    using Configuration;
     using Notifications;
     using System.Collections.Generic;
 
     public class SlackMessageFactory : ISlackMessageFactory
     {
-        private Message ToSlackMessage(INotification notification, BotElement bot, string channel)
-        {
-            var lines = notification.ToMessage(bot, s => s);
-
-            return SlackHelper.CreateSlackMessage(lines, bot, channel, bot.GetSetting("standardColor"));
-        }
-
-        private Message ToSlackMessage(IBuildCompletionNotification notification, BotElement bot, string channel)
-        {
-            var lines = notification.ToMessage(bot, s => s);
-            var color = notification.IsSuccessful ? bot.GetSetting("successColor") : bot.GetSetting("errorColor");
-
-            return SlackHelper.CreateSlackMessage(lines, bot, channel, color);
-        }
-
-        private Message ToSlackMessage(IWorkItemChangedNotification notification, BotElement bot, string channel)
-        {
-            string header = notification.ToMessage(bot, s => s).First();
-            var fields = new[] { 
-                new AttachmentField(bot.Text.State, notification.State, true), 
-                new AttachmentField(bot.Text.AssignedTo, notification.AssignedTo, true) 
-            };
-
-            return SlackHelper.CreateSlackMessage(header, fields, bot, channel, bot.GetSetting("standardColor"));
-        }
-
         public IEnumerable<Message> GetMessages(INotification notification, SlackConfiguration slackConfiguration)
         {
             return ToSlackMessages((dynamic)notification, slackConfiguration);
+        }
+
+        private IEnumerable<Message> ToSlackMessages(INotification notification, SlackConfiguration slackConfiguration)
+        {
+            return
+                slackConfiguration.Channels.Select(
+                    channel => ToSlackMessage(notification, slackConfiguration, channel));
+        }
+
+        private Message ToSlackMessage(INotification notification, SlackConfiguration slackConfiguration, string channel)
+        {
+            var lines = notification.ToMessage(slackConfiguration.Bot, s => s);
+
+            return SlackHelper.CreateSlackMessage(lines, slackConfiguration.Bot, channel, slackConfiguration.StandardColor);
+        }
+
+        private IEnumerable<Message> ToSlackMessages(IBuildCompletionNotification notification,
+            SlackConfiguration slackConfiguration)
+        {
+            var messages = new List<Message>(slackConfiguration.Channels.Select(channel => ToSlackMessage(notification, slackConfiguration, channel)));
+
+            if (!notification.IsSuccessful)
+            {
+                messages.AddRange(
+                    slackConfiguration.NotableEventsChannels.Select(
+                        channel => ToSlackMessage(notification, slackConfiguration, channel)));
+            }
+
+            return messages;
+        }
+
+        private Message ToSlackMessage(IBuildCompletionNotification notification, SlackConfiguration slackConfiguration, string channel)
+        {
+            var lines = notification.ToMessage(slackConfiguration.Bot, s => s);
+            var color = notification.IsSuccessful ? slackConfiguration.SuccessColor : slackConfiguration.ErrorColor;
+
+            return SlackHelper.CreateSlackMessage(lines, slackConfiguration.Bot, channel, color);
         }
 
         private IEnumerable<Message> ToSlackMessages(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
@@ -47,7 +57,7 @@ namespace DevCore.TfsNotificationRelay.Slack
 
             return
                 slackConfiguration.Channels.Select(
-                    channel => ToSlackMessage(notification, slackConfiguration.Bot, channel));
+                    channel => ToSlackMessage(notification, slackConfiguration, channel));
         }
 
         private bool WorkItemIsReturnedFromTesting(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
@@ -57,26 +67,19 @@ namespace DevCore.TfsNotificationRelay.Slack
                 notification.OldState == slackConfiguration.TestingState;
         }
 
-        private IEnumerable<Message> ToSlackMessages(INotification notification, SlackConfiguration slackConfiguration)
+        private Message ToSlackMessage(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            return
-                slackConfiguration.Channels.Select(
-                    channel => ToSlackMessage(notification, slackConfiguration.Bot, channel));
-        }
+            var colour = WorkItemIsReturnedFromTesting(notification, slackConfiguration)
+                ? slackConfiguration.ErrorColor
+                : slackConfiguration.StandardColor;
 
-        private IEnumerable<Message> ToSlackMessages(IBuildCompletionNotification notification,
-            SlackConfiguration slackConfiguration)
-        {
-            var messages = new List<Message>(slackConfiguration.Channels.Select(channel => ToSlackMessage(notification, slackConfiguration.Bot, channel)));
+            string header = notification.ToMessage(slackConfiguration.Bot, s => s).First();
+            var fields = new[] { 
+                new AttachmentField(slackConfiguration.Bot.Text.State, notification.State, true), 
+                new AttachmentField(slackConfiguration.Bot.Text.AssignedTo, notification.AssignedTo, true) 
+            };
 
-            if (!notification.IsSuccessful)
-            {
-                messages.AddRange(
-                    slackConfiguration.NotableEventsChannels.Select(
-                        channel => ToSlackMessage(notification, slackConfiguration.Bot, channel)));
-            }
-
-            return messages;
+            return SlackHelper.CreateSlackMessage(header, fields, slackConfiguration.Bot, channel, colour);
         }
     }
 }
