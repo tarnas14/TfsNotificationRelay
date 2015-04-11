@@ -17,6 +17,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         bool IsAssignmentChanged { get; set; }
         string AssignedTo { get; set; }
         string State { get; set; }
+        string OldState { get; set; }
         string UserName { get; }
         string TeamProjectCollection { get; set; }
         IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform);

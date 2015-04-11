@@ -16,6 +16,8 @@ namespace DevCore.TfsNotificationRelay.Slack
         public string ErrorColor { get; set; }
         public string WebhookUrl { get; set; }
         public string IconEmoji { get; set; }
+        public string TestingState { get; set; }
+        public string InProgressState { get; set; }
 
         public SlackConfiguration()
         {

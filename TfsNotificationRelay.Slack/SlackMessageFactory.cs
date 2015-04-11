@@ -40,9 +40,21 @@ namespace DevCore.TfsNotificationRelay.Slack
 
         private IEnumerable<Message> ToSlackMessages(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
         {
+            if (notification.IsAssignmentChanged || !WorkItemIsReturnedFromTesting(notification, slackConfiguration))
+            {
+                return new Message[] { };
+            }
+
             return
                 slackConfiguration.Channels.Select(
                     channel => ToSlackMessage(notification, slackConfiguration.Bot, channel));
+        }
+
+        private bool WorkItemIsReturnedFromTesting(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
+        {
+            return
+                notification.State == slackConfiguration.InProgressState &&
+                notification.OldState == slackConfiguration.TestingState;
         }
 
         private IEnumerable<Message> ToSlackMessages(INotification notification, SlackConfiguration slackConfiguration)

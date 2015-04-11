@@ -14,9 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
@@ -36,6 +33,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public bool IsAssignmentChanged { get; set; }
         public string AssignedTo { get; set; }
         public string State { get; set; }
+        public string OldState { get; set; }
 
         public string UserName
         {
@@ -63,6 +61,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 IsAssignmentChanged = this.IsAssignmentChanged,
                 AssignedTo = transform(this.AssignedTo),
                 State = transform(this.State),
+                OldState = transform(this.OldState),
                 UserName = transform(this.UserName),
                 Action = FormatAction(bot)
             };

@@ -11,17 +11,11 @@
  * (at your option) any later version. See included file COPYING for details.
  */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Framework.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Server;
-using Microsoft.TeamFoundation.Integration.Server;
 using Microsoft.TeamFoundation.Server.Core;
 using Microsoft.TeamFoundation.Framework.Common;
-using System.Text.RegularExpressions;
 using DevCore.TfsNotificationRelay.Notifications;
 
 namespace DevCore.TfsNotificationRelay.EventHandlers
@@ -46,6 +40,7 @@ namespace DevCore.TfsNotificationRelay.EventHandlers
                 IsStateChanged = ev.ChangedFields.StringFields.Any(f => f.ReferenceName == "System.State"),
                 IsAssignmentChanged = ev.ChangedFields.StringFields.Any(f => f.ReferenceName == "System.AssignedTo"),
                 State = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.State").NewValue,
+                OldState = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.State").OldValue,
                 AssignedTo = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.AssignedTo").NewValue
             };
 
