@@ -34,6 +34,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public string AssignedTo { get; set; }
         public string State { get; set; }
         public string OldState { get; set; }
+        public string Severity { get; set; }
 
         public string UserName
         {

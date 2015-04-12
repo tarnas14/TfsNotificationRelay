@@ -145,5 +145,18 @@
             Assert.That(config.InProgressState, Is.EqualTo(expectedInProgressState));
             Assert.That(config.ReadyToTest, Is.EqualTo(expectedReadyToTestState));
         }
+
+        [Test]
+        public void ShouldReadBugWorkItemType()
+        {
+            //given
+            const string expected = "bugWorkItemType";
+
+            //when
+            var config = LoadTestConfig();
+
+            //then
+            Assert.That(config.BugWorkItemType, Is.EqualTo(expected));
+        }
     }
 }

@@ -62,7 +62,10 @@ namespace DevCore.TfsNotificationRelay.Slack
 
         private bool NeedToNotifyChannelsAboutWorkItemStateChange(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
         {
-            return WorkItemIsReturnedFromTesting(notification, slackConfiguration) || WorkItemIsReadyForTesting(notification, slackConfiguration);
+            return 
+                WorkItemIsReturnedFromTesting(notification, slackConfiguration) || 
+                WorkItemIsReadyForTesting(notification, slackConfiguration) ||
+                WorkItemIsANewBugThatNeedsToBeNotifiedAbout(notification, slackConfiguration);
         }
 
         private bool WorkItemIsReadyForTesting(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
@@ -77,17 +80,17 @@ namespace DevCore.TfsNotificationRelay.Slack
                 notification.OldState == slackConfiguration.TestingState;
         }
 
+        private bool WorkItemIsANewBugThatNeedsToBeNotifiedAbout(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration)
+        {
+            return 
+                notification.IsNew && 
+                notification.WiType == slackConfiguration.BugWorkItemType &&
+                slackConfiguration.SeveritiesToBeNotifiedAbout.Contains(notification.Severity);
+        }
+
         private Message ToSlackMessage(IWorkItemChangedNotification notification, SlackConfiguration slackConfiguration, string channel)
         {
-            var colour = slackConfiguration.StandardColor;
-            if (WorkItemIsReturnedFromTesting(notification, slackConfiguration))
-            {
-                colour = slackConfiguration.ErrorColor;
-            }
-            else if (WorkItemIsReadyForTesting(notification, slackConfiguration))
-            {
-                colour = slackConfiguration.SuccessColor;
-            }
+            var colour = WorkItemIsReadyForTesting(notification, slackConfiguration) ? slackConfiguration.SuccessColor : slackConfiguration.ErrorColor; 
             
             string header = notification.ToMessage(slackConfiguration.Bot, s => s).First();
             var fields = new[] { 

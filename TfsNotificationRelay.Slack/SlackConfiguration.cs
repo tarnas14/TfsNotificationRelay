@@ -19,6 +19,8 @@ namespace DevCore.TfsNotificationRelay.Slack
         public string TestingState { get; set; }
         public string InProgressState { get; set; }
         public string ReadyToTest { get; set; }
+        public string BugWorkItemType { get; set; }
+        public IEnumerable<string> SeveritiesToBeNotifiedAbout { get; set; }
 
         public SlackConfiguration()
         {

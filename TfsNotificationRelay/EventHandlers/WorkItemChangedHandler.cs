@@ -41,7 +41,8 @@ namespace DevCore.TfsNotificationRelay.EventHandlers
                 IsAssignmentChanged = ev.ChangedFields.StringFields.Any(f => f.ReferenceName == "System.AssignedTo"),
                 State = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.State").NewValue,
                 OldState = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.State").OldValue,
-                AssignedTo = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.AssignedTo").NewValue
+                AssignedTo = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.AssignedTo").NewValue,
+                Severity = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.Severity").NewValue //TODO see priority vs severity and their names in tfs and such
             };
 
             return notification;

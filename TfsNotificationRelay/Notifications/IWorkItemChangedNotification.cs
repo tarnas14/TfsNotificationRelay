@@ -20,6 +20,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         string OldState { get; set; }
         string UserName { get; }
         string TeamProjectCollection { get; set; }
+        string Severity { get; set; }
         IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform);
         bool IsMatch(string collection, Configuration.EventRuleCollection eventRules);
     }
