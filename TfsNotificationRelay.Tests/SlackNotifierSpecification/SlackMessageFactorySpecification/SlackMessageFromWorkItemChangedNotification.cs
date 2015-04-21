@@ -129,7 +129,7 @@
         }
 
         [Test]
-        public void ShouldSendNotificationsToNormalChannelWhenNewBugIsCreatedOfSpecifiedSeverityIsCreated()
+        public void ShouldSendNotificationsToNormalChannelWhenNewBugOfSpecifiedSeverityIsCreated()
         {
             //given
             SlackConfiguration.SeveritiesToBeNotifiedAbout = new[] {"testSeverity"};
